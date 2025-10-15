@@ -67,22 +67,20 @@ App will open at:
 ```
 IVAC-Streamlit-App/
 │
-├── app.py                        # Main Streamlit entry point
-├── requirements.txt              # Dependencies
-├── README.md                     # Documentation
+├── app.py                        
+├── README.md                     
 │
 ├── data/
 │   └── fr-en-indicateurs-valeur-ajoutee-colleges.csv
 │
 ├── assets/
-│   └── fr_departements.geojson   # GeoJSON file for choropleth maps
+│   └── fr_departements.geojson   
 │
 ├── sections/
-│   ├── intro.py                  # Context & introduction
-│   ├── profiling.py              # Data quality checks
-│   ├── overview.py               # Trends, KPIs, maps
-│   ├── deep_dives.py             # Detailed analysis
-│   └── conclusions.py            # Insights & recommendations
+│   ├── intro.py                  #
+│   ├── profiling.py              
+│   ├── overview.py               
+│   └── conclusions.py            
 │
 └── utils/
     ├── io.py, prep.py, viz.py, geo.py  # Helper scripts
