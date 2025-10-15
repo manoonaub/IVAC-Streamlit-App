@@ -370,7 +370,7 @@ def show():
         
         value_col = "taux_reussite_g" if "taux_reussite_g" in by_dep.columns else "valeur_ajoutee"
         if value_col in by_dep.columns:
-            geojson = load_geojson("/Users/manonaubel/Library/CloudStorage/OneDrive-Efrei/StreamlitApp25_>20221191_AUBEL.MANON/assets/assets/fr_departements.geojson")
+            geojson = load_geojson("assets/assets/fr_departements.geojson")
             if geojson:
                 map_chart(
                     by_departement=by_dep,
