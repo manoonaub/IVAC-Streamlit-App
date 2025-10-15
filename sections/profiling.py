@@ -266,7 +266,6 @@ def advanced_validity_checks(df: pd.DataFrame) -> dict:
         issues["logic_zero_candidates_but_rate"] = d.loc[mask]
 
     if "uai" in d.columns:
-        # Format attendu : 7 chiffres + 1 lettre majuscule
         mask = ~d["uai"].astype(str).str.match(r"^[0-9]{7}[A-Z]$", na=False)
         issues["invalid_uai_format"] = d.loc[mask]
 
@@ -303,7 +302,7 @@ def detect_outliers_mask(series: pd.Series, method: str = "iqr") -> pd.Series:
         lower, upper = q1 - 1.5 * iqr, q3 + 1.5 * iqr
         mask.loc[s.notna()] = (s_valid < lower) | (s_valid > upper)
     elif method == "zscore":
-        from scipy import stats  # facultatif
+        from scipy import stats  
         z = np.abs(stats.zscore(s_valid))
         mask.loc[s.notna()] = z > 3
     return mask
@@ -316,10 +315,10 @@ def calculate_quality_score(df: pd.DataFrame) -> float:
     # Completeness
     completeness = (1 - df.isna().sum().sum() / df.size) * 100
 
-    # Uniqueness on UAI (fallback 100 if not available)
+    # Uniqueness (%) sur uai si dispo, sinon 100%
     uniqueness = (df["uai"].nunique() / len(df) * 100) if "uai" in df.columns else 100.0
 
-    # Validity: union des lignes invalides (validity_checks + advanced + cross)
+    # Validity
     invalid_idx = set()
     base_val = validity_checks(df)
     for fr in base_val["frames"].values():
@@ -332,7 +331,7 @@ def calculate_quality_score(df: pd.DataFrame) -> float:
         invalid_idx.update(fr.index.tolist())
     validity = 100 * (1 - (len(invalid_idx) / len(df)))
 
-    # Consistency: duplication clé (uai, session) — plus il y a de doublons, plus on pénalise
+    # Consistency
     if {"uai", "session"}.issubset(df.columns):
         dup_pct = (df.duplicated(subset=["uai", "session"]).sum() / len(df)) * 100
         consistency = max(0.0, 100 - dup_pct)
@@ -382,7 +381,7 @@ def apply_imputation(df: pd.DataFrame, num_cols: list[str], strategy: str, group
         return d
 
     if group_by and group_by in d.columns and strategy in {"median", "mean"}:
-        # Imputation par groupe (médiane par défaut)
+        # Imputation par groupe 
         for c in num_cols:
             d = impute_by_group(d, c, group_by)
         return d
@@ -391,7 +390,7 @@ def apply_imputation(df: pd.DataFrame, num_cols: list[str], strategy: str, group
         return impute_numeric(d, num_cols, strategy=strategy)
 
     if strategy == "mode":
-        # Appliquer le mode numérique via impute_categorical (robuste)
+        # Appliquer le mode numérique via impute_categorical 
         for c in num_cols:
             mode_val = pd.to_numeric(d[c], errors="coerce").mode()
             if not mode_val.empty:
@@ -417,7 +416,6 @@ def apply_imputation(df: pd.DataFrame, num_cols: list[str], strategy: str, group
 
 
 def show():
-    # ---- Language switch
     current = _get_lang()
     st.sidebar.subheader(TEXTS[current]["language"])
     choice = st.sidebar.radio(
@@ -442,8 +440,7 @@ def show():
     rows_raw, cols_raw = df_raw.shape
     rows_clean, cols_clean = df_base.shape
 
-    # Diff columns
-    # (normalise noms bruts → comparer aux colonnes nettoyées)
+
     def _to_snake(s: str) -> str:
         import re as _re
         s = str(s).strip().lower()
@@ -500,7 +497,7 @@ def show():
 
     st.divider()
 
-    # 3) Missingness
+    #  Missingness
     st.subheader(T["missing_title"])
     missing_pct = schema["Null_Pct"].sort_values(ascending=False)
     worst = missing_pct[missing_pct > 0].head(5)
@@ -512,7 +509,7 @@ def show():
 
     st.divider()
 
-    # 4) Validity (base) + Advanced + Cross
+    # Validity (
     st.subheader(T["valid_title"])
     base_checks = validity_checks(df_raw)
     total_issues = sum(base_checks["summary"].values())
@@ -552,7 +549,7 @@ def show():
 
     st.divider()
 
-    # 5) Score global + Alertes
+    
     st.subheader(T["quality_title"])
     score = calculate_quality_score(df_base)
     st.metric(T["quality_title"], f"{score}/100")
@@ -567,7 +564,7 @@ def show():
 
     st.divider()
 
-    # 6) Aperçu filtrable
+    
     st.subheader(T["preview_title"])
     colf1, colf2, colf3, colf4 = st.columns(4)
     sessions = sorted(df_base["session"].dropna().unique().tolist()) if "session" in df_base.columns else []
@@ -593,7 +590,7 @@ def show():
 
     st.divider()
 
-    # 8) Outliers + box plot
+    
     st.subheader(T["outliers_title"])
     st.caption(T["outliers_note"])
     cols_to_flag = [c for c in ["valeur_ajoutee", "nb_candidats_total", "taux_reussite_g"] if c in df_view.columns]
@@ -607,7 +604,7 @@ def show():
 
     st.divider()
 
-    # 9) Distributions + interprétation
+    
     st.subheader(T["quick_title"])
     st.markdown(
         f"""
@@ -644,7 +641,7 @@ def show():
 
     st.caption(T["dist_legend"])
 
-    # Notes d'interprétation bilingues
+    
     if choice == "fr":
         st.markdown("""
         **📈 Valeur ajoutée (taux de réussite)**  
@@ -668,7 +665,7 @@ def show():
 
     st.markdown("---")
 
-    #  Rapport qualité exportable
+    
     def generate_quality_report(df: pd.DataFrame) -> pd.DataFrame:
         miss_pct = (df.isna().sum().sum() / df.size * 100) if df.size else 0
         return pd.DataFrame({

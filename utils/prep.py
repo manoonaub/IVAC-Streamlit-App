@@ -3,7 +3,7 @@ import re
 from typing import Dict, Tuple
 import pandas as pd
 
-# --- 1) Low-level Helpers ---
+
 
 def _ensure_session_str(df: pd.DataFrame | None) -> pd.DataFrame | None:
     """
@@ -27,7 +27,6 @@ def _to_snake(s: str) -> str:
     s = re.sub(r"_+", "_", s).strip("_")
     return s
 
-# --- 2) Main Cleaning Function ---
 def clean_ivac(df: pd.DataFrame) -> pd.DataFrame:
     """Cleans and standardizes the raw IVAC dataframe."""
     d = df.copy()
@@ -71,7 +70,7 @@ def clean_ivac(df: pd.DataFrame) -> pd.DataFrame:
     return d
 
 
-# --- 3) Dashboard-specific Preparation Functions ---
+# data aggregation functions
 def make_tables(df_raw: pd.DataFrame) -> Dict[str, pd.DataFrame]:
     """Builds pre-aggregated tables used by the dashboard."""
     df = clean_ivac(df_raw.copy())
@@ -128,7 +127,7 @@ def compute_kpis(df_latest: pd.DataFrame) -> Tuple[str, str, str]:
 
     return kpi1, kpi2, kpi3
 
-# --- 4) Profiling and Validation Functions ---
+# profiling functions
 def info_table(df: pd.DataFrame) -> pd.DataFrame:
     """Generates a summary table similar to df.info()."""
     return (pd.DataFrame({
@@ -179,7 +178,7 @@ def profile_dataframe(df_raw: pd.DataFrame) -> dict:
         "validity": validity_checks(df_raw)
     }
     
-# --- 5) Column Transformation Analysis ---
+# transformation diff functions
 def diff_columns_breakdown(df_raw: pd.DataFrame, df_clean: pd.DataFrame) -> dict:
     """
     Returns a clean breakdown of column changes:
@@ -211,8 +210,7 @@ def diff_columns_breakdown(df_raw: pd.DataFrame, df_clean: pd.DataFrame) -> dict
         "dropped": dropped,
     }
 
-
-# --- 6) Interactive Cleaning Helpers ---
+#in
 def impute_numeric(df: pd.DataFrame, cols: list[str], strategy: str = "median") -> pd.DataFrame:
     """Imputes missing numeric values."""
     d = df.copy()

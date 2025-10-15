@@ -1,4 +1,4 @@
-# sections/overview.py — CONDENSED & BILINGUAL (FR/EN)
+# sections/overview.py 
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -10,7 +10,7 @@ from utils.prep import make_tables, _ensure_session_str
 from utils.viz import bar_chart, histogram
 from utils.geo import load_geojson, map_chart
 
-# Bilingual texts
+
 TEXTS = {
     "en": {
         "language": "Language", "en": "English", "fr": "Français",
@@ -239,7 +239,7 @@ def show():
     if selected_regions and not reg_view.empty and "region_academique" in reg_view.columns:
         reg_view = reg_view[reg_view["region_academique"].isin(selected_regions)]
 
-    # ==================== SECTION 1: KPIs ====================
+    # section 1: KPIs
     st.markdown(f"### {T['exec_title']}")
     
     # Guidance for interpretation
@@ -292,12 +292,11 @@ def show():
 
     st.divider()
 
-    # ==================== SECTION 2: TRENDS ====================
+    # section 2: TRENDS
     st.subheader(T["trend_title"])
     if ts is not None and not ts.empty and "valeur_ajoutee" in ts.columns and "session_str" in ts.columns:
         ts_valid = ts["valeur_ajoutee"].dropna()
         if len(ts_valid) >= 2:
-            # Joint evolution chart
             fig = go.Figure()
             fig.add_trace(go.Scatter(
                 x=ts["session_str"], y=ts["valeur_ajoutee"],
@@ -338,10 +337,9 @@ def show():
 
     st.divider()
 
-    # ==================== SECTION 3: REGIONAL DISPARITIES ====================
+    # section 3: REGIONAL DISPARITIES
     st.subheader(T["regional_title"])
-    
-    # Top/Bottom regions bar charts
+
     if not reg_view.empty and "valeur_ajoutee" in reg_view.columns and "region_academique" in reg_view.columns:
         reg_sorted = reg_view.sort_values("valeur_ajoutee", ascending=False)
         
@@ -388,7 +386,7 @@ def show():
 
     st.divider()
 
-    # ==================== SECTION 4: DISTRIBUTION ====================
+    # section 4: DISTRIBUTION
     st.subheader(T["dist_title"])
     if "valeur_ajoutee" in df_view.columns and not df_view.empty:
         va_valid = df_view["valeur_ajoutee"].dropna()
@@ -415,12 +413,11 @@ def show():
 
     st.divider()
 
-    # ==================== SECTION 5: SECTOR COMPARISON ====================
+    #section 5: SECTOR COMPARISON
     st.subheader(T["sector_title"])
     if "secteur" in df_view.columns and "valeur_ajoutee" in df_view.columns and not df_view.empty:
         df_sector = df_view[df_view["secteur"].isin(["PU", "PR"])].copy()
         if not df_sector.empty:
-            # Box plots
             fig = px.box(
                 df_sector, x="secteur", y="valeur_ajoutee",
                 title=T["sector_box"], color="secteur",
@@ -428,8 +425,7 @@ def show():
             )
             fig.update_traces(marker=dict(size=8))
             st.plotly_chart(fig, use_container_width=True)
-            
-            # Statistical test
+        
             from scipy import stats
             pu = df_sector[df_sector["secteur"] == "PU"]["valeur_ajoutee"].dropna()
             pr = df_sector[df_sector["secteur"] == "PR"]["valeur_ajoutee"].dropna()
@@ -457,7 +453,7 @@ def show():
 
     st.divider()
 
-    # ==================== SECTION 6: CORRELATION MATRIX ====================
+    # section 6: CORRELATION MATRIX
     st.subheader(T["corrmatrix_title"])
     numeric_cols = ["valeur_ajoutee", "taux_reussite_g", "nb_candidats_total", 
                     "taux_brut_reussite_g", "effectif_presents_g", "effectif_admis_g"]
@@ -520,7 +516,7 @@ def show():
 
     st.divider()
 
-    # ==================== SECTION 7: NATIONAL SYNTHESIS ====================
+    # section 7: SYNTHESIS
     st.markdown(f"### {T['synthesis_title']}")
     if not df_view.empty and "valeur_ajoutee" in df_view.columns:
         mean_va = df_view["valeur_ajoutee"].mean()
@@ -535,7 +531,7 @@ def show():
         else:
             va_interp = T["va_above"]
         
-        # Best/worst regions
+        # Best/worst 
         best_region = worst_region = "—"
         if "region_academique" in df_view.columns:
             reg_mean = df_view.groupby("region_academique")["valeur_ajoutee"].mean().dropna()

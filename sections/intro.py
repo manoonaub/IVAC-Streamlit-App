@@ -163,7 +163,6 @@ def _get_lang() -> str:
 def _set_lang(lang: str):
     st.query_params["lang"] = lang
 def show():
-    # ---- Language switcher (sidebar) ----
     current_lang = _get_lang()
     st.sidebar.subheader(LANG_TEXT[current_lang].get("language", "Language"))
     choice = st.sidebar.radio(
@@ -179,7 +178,6 @@ def show():
         st.rerun()
     T = LANG_TEXT.get(choice or current_lang, LANG_TEXT["en"])
 
-    # ---------------- TITLE & HOOK ----------------
     st.title(T.get("title", "IVAC – Added Value Indicators"))
     st.markdown(f"{T.get('hook1','')}\n\n{T.get('hook2','')}")
     if T.get("def_va"):
@@ -208,7 +206,7 @@ def show():
             st.query_params["page"] = "Overview & Analysis"
             st.rerun()
 
-    # ---------------- CONTEXT & QUESTION (Progressive Disclosure) ----------------
+    # question contexte
     with st.expander("📖 Learn More About the Project Context", expanded=False):
         if T.get("context_title"):
             st.subheader(T["context_title"])
@@ -219,7 +217,7 @@ def show():
         if T.get("source"):
             st.caption(T["source"])
 
-    # ---------------- CLEANING SUMMARY ----------------
+    # 
     if T.get("prep_title"):
         st.subheader(T["prep_title"])
 
@@ -228,7 +226,7 @@ def show():
     df_clean = clean_ivac(df_raw)
     diff = diff_columns_breakdown(df_raw, df_clean)
 
-    # ---- KPIs
+    #  KPIs
     c1, c2, c3, c4, c5 = st.columns(5)
     c1.metric(T.get("metric_rows", "Rows"), f"{df_raw.shape[0]:,}".replace(",", " "))
 
@@ -253,7 +251,6 @@ def show():
     c4.metric(T.get("metric_academies", "Academic regions"), n_academies)
     c5.metric(T.get("metric_schools", "Unique schools (UAI)"), n_schools)
     st.caption("Counts computed on the cleaned dataset (all sessions combined).")
-    # ---- Donut: column structure
     raw_cols_count = df_raw.shape[1]
     kept_or_renamed_count = max(raw_cols_count - dropped_count, 0)
 
@@ -278,7 +275,7 @@ def show():
         "*Dropped*: columns removed (duplicates, replaced, or irrelevant)."
     )
     
-    # Validation checks (warnings instead of assertions for robustness)
+
     if df_clean.shape[0] != df_raw.shape[0]:
         st.warning(f"⚠️ Row count changed during cleaning: {df_raw.shape[0]} → {df_clean.shape[0]}")
     
@@ -286,7 +283,7 @@ def show():
     if missing_cols:
         st.warning(f"⚠️ Expected columns missing after cleaning: {', '.join(missing_cols)}")
     
-    # ---- Details
+    # ---- Details on changes
     if diff.get("engineered"):
         st.caption(f"{T.get('eng_cols_caption','Engineered columns added:')} {', '.join(diff['engineered'])}")
 
@@ -303,11 +300,11 @@ def show():
     if diff.get("dropped"):
         st.caption(f"{T.get('dropped_caption','Dropped columns:')} {', '.join(diff['dropped'])}")
 
-    # ---- Steps text
+    
     if T.get("applied_steps"):
         st.markdown(T["applied_steps"])
 
-    # ---- Preview + note
+    # ---- Preview
     if T.get("preview_title"):
         st.subheader(T["preview_title"])
     st.dataframe(df_clean.head(), use_container_width=True)

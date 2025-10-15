@@ -7,16 +7,16 @@ import plotly.io as pio
 PRIMARY_BLUE = "#2563eb"
 NEGATIVE_RED = "#e11d48"
 
-# Palette de couleurs vibrantes
+
 VIBRANT_COLORS = [
-    "#3b82f6",  # Bleu vif
-    "#10b981",  # Vert émeraude
-    "#f59e0b",  # Orange
-    "#ef4444",  # Rouge
-    "#8b5cf6",  # Violet
-    "#ec4899",  # Rose
-    "#06b6d4",  # Cyan
-    "#84cc16",  # Lime
+    "#3b82f6",  
+    "#10b981",  
+    "#f59e0b",  
+    "#ef4444",  #
+    "#8b5cf6",  
+    "#ec4899",  
+    "#06b6d4",  
+    "#84cc16",  
 ]
 
 
@@ -26,11 +26,11 @@ def _apply_common_layout(fig, xaxis_title=None, yaxis_title=None):
         "margin": dict(l=10, r=10, t=50, b=10), 
         "font": dict(size=13), 
         "showlegend": True,
-        "plot_bgcolor": "rgba(0,0,0,0)",  # Transparent background
-        "paper_bgcolor": "rgba(0,0,0,0)"  # Transparent background
+        "plot_bgcolor": "rgba(0,0,0,0)",  
+        "paper_bgcolor": "rgba(0,0,0,0)"  
     }
     
-    # Add axis titles if provided (for accessibility)
+
     if xaxis_title:
         layout_params["xaxis_title"] = xaxis_title
     if yaxis_title:
@@ -51,7 +51,6 @@ def line_chart(df: pd.DataFrame, x: str, y: str, color: str | None = None, title
     if ref_y is not None:
         fig.add_hline(y=ref_y, line_dash="dash", line_color="red", annotation_text=ref_label or str(ref_y), annotation_position="top left")
     
-    # Threshold zones (colored bands)
     if threshold_zones:
         for zone in threshold_zones:
             fig.add_hrect(
@@ -238,7 +237,7 @@ def correlation_heatmap(df: pd.DataFrame, cols: list[str], title: str | None = N
             st.download_button("Télécharger PNG", data=png_bytes, file_name=download_name, mime="image/png")
         except Exception:
             st.caption("Astuce: installe kaleido pour activer l'export PNG.")
-# --- Palette utils -----------------------------------------------------------
+# Palette de couleurs qualitative étendue 
 def make_color_map(categories):
     """Retourne un dict {categorie: couleur} avec une grande palette qualitative."""
     import plotly.express as px

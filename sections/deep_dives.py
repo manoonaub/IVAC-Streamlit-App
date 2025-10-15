@@ -4,7 +4,7 @@ from utils.io import load_data
 from utils.prep import make_tables
 from utils.viz import bar_chart, histogram, line_chart, scatter
 
-
+#commentaires pour le visuel (emojis)
 TEXTS = {
     "en": {
         "language": "Language", "en": "English", "fr": "Français",
@@ -199,7 +199,7 @@ def show():
     else:
         df_acad_sess = df_acad
 
-    # 1) Évolution d'un établissement sur les sessions
+    # Évolution d'un établissement sur les sessions
     if etab_sel and "nom_de_l_etablissement" in df_std.columns and "session_str" in df_std.columns:
         st.subheader(T["school_evolution"])
         df_etab = df_std[df_std["nom_de_l_etablissement"] == etab_sel]
@@ -227,7 +227,7 @@ def show():
                       ref_y=0, ref_label=expected_label,
                       threshold_zones=zones_school)
             
-            # 📊 ANALYSE DU GRAPHIQUE (dans boîte colorée)
+            # ANALYSE DU GRAPHIQUE (dans boîte colorée)
             va_values = df_etab["valeur_ajoutee"].dropna()
             if len(va_values) >= 2:
                 va_mean = va_values.mean()
@@ -282,7 +282,7 @@ def show():
                       ref_y=87, ref_label=nat_avg_label,
                       threshold_zones=zones_rate)
             
-            # 📊 ANALYSE TAUX DE RÉUSSITE (dans boîte colorée)
+            #  ANALYSE TAUX DE RÉUSSITE (dans boîte colorée)
             rate_values = df_etab["taux_reussite_g"].dropna()
             if len(rate_values) >= 2:
                 rate_mean = rate_values.mean()
@@ -319,7 +319,7 @@ Comparez ce graphique avec celui de la valeur ajoutée ci-dessus. Si les taux so
         
         st.markdown("---")
 
-    # 2) Comparaison intra-académie (Top/Bottom sur session)
+    # Comparaison intra-académie (Top/Bottom sur session)
     st.subheader(T["intra_academy"])
     rank_metric = metric_sel if metric_sel else ("valeur_ajoutee" if "valeur_ajoutee" in df_acad_sess.columns else None)
     if not df_acad_sess.empty and rank_metric is not None and rank_metric in df_acad_sess.columns:
@@ -331,7 +331,7 @@ Comparez ce graphique avec celui de la valeur ajoutée ci-dessus. Si les taux so
             
             bar_chart(df_rank.head(top_n), x="nom_de_l_etablissement", y=rank_metric, title=top_title, download_name="top_schools.png")
             
-            # 📊 ANALYSE TOP PERFORMERS (boîte verte = succès)
+            # ANALYSE TOP PERFORMERS (boîte verte = succès)
             top_values = df_rank.head(top_n)[rank_metric]
             if T is TEXTS["en"]:
                 st.success(f"""
@@ -360,7 +360,7 @@ Ces établissements démontrent des **performances exceptionnelles** au sein de 
             
             bar_chart(df_rank.tail(top_n), x="nom_de_l_etablissement", y=rank_metric, title=bottom_title, download_name="bottom_schools.png")
             
-            # 📊 ANALYSE BOTTOM PERFORMERS (boîte rouge/orange = attention requise)
+            #  ANALYSE BOTTOM PERFORMERS (boîte rouge/orange = attention requise)
             bottom_values = df_rank.tail(top_n)[rank_metric]
             if T is TEXTS["en"]:
                 st.warning(f"""
@@ -425,7 +425,7 @@ Ces établissements démontrent des **performances exceptionnelles** au sein de 
                 bar_chart(size_summary, x="size_category", y="valeur_ajoutee", 
                          title=size_title, ref_y=0, ref_label="Expected (0)" if T is TEXTS["en"] else "Attendu (0)")
                 
-                # 📊 ANALYSE PAR TAILLE (boîte colorée)
+                #  ANALYSE PAR TAILLE (boîte colorée)
                 best_size = size_summary.loc[size_summary["valeur_ajoutee"].idxmax(), "size_category"]
                 best_va = size_summary["valeur_ajoutee"].max()
                 worst_size = size_summary.loc[size_summary["valeur_ajoutee"].idxmin(), "size_category"]
@@ -467,7 +467,7 @@ La taille compte, mais n'est pas déterministe. {"Les petits établissements peu
         no_data_msg = "Required columns not available." if T is TEXTS["en"] else "Colonnes requises non disponibles."
         st.info(no_data_msg)
     
-    # 4) Méthode 2 : Croisement Secteur × Taille
+    # methode 2 : Croisement Secteur × Taille
     st.markdown("---")
     method2_title = "**Method 2:** Sector × Size Interaction" if T is TEXTS["en"] else "**Méthode 2 :** Croisement Secteur × Taille"
     st.markdown(f"### {method2_title}")
@@ -492,7 +492,7 @@ La taille compte, mais n'est pas déterministe. {"Les petits établissements peu
                 bar_chart(cross_summary, x="size_category", y="valeur_ajoutee", color="secteur",
                          title=cross_title, ref_y=0)
                 
-                # 📊 ANALYSE SECTEUR × TAILLE (boîte colorée)
+                #  ANALYSE SECTEUR × TAILLE (boîte colorée)
                 if "PU" in cross_summary["secteur"].values and "PR" in cross_summary["secteur"].values:
                     pu_mean = cross_summary[cross_summary["secteur"] == "PU"]["valeur_ajoutee"].mean()
                     pr_mean = cross_summary[cross_summary["secteur"] == "PR"]["valeur_ajoutee"].mean()
@@ -533,7 +533,7 @@ Les effets sectoriels interagissent avec la taille. {"L'avantage du privé n'est
         no_data_msg = "Required columns not available." if T is TEXTS["en"] else "Colonnes requises non disponibles."
         st.info(no_data_msg)
     
-    # 5) Méthode 3 : Analyse des Outliers
+    # 3) Méthode 3 : Analyse des outliers
     st.markdown("---")
     method3_title = "**Method 3:** Outliers Analysis" if T is TEXTS["en"] else "**Méthode 3 :** Analyse des Outliers"
     st.markdown(f"### {method3_title}")
@@ -551,7 +551,7 @@ Les effets sectoriels interagissent avec la taille. {"L'avantage du privé n'est
             bar_chart(top_outliers, x="nom_de_l_etablissement", y="valeur_ajoutee", 
                      title=outliers_title_top, download_name="top_outliers.png")
             
-            # 📊 ANALYSE TOP OUTLIERS (boîte verte)
+            # ANALYSE TOP OUTLIERS (boîte verte)
             if T is TEXTS["en"]:
                 st.success(f"""
 **📊 Exceptional Performers (Outliers):**
@@ -578,7 +578,7 @@ Ces outliers combinent probablement : (1) **pédagogie innovante**, (2) **leader
             bar_chart(bottom_outliers, x="nom_de_l_etablissement", y="valeur_ajoutee", 
                      title=outliers_title_bottom, download_name="bottom_outliers.png")
             
-            # 📊 ANALYSE BOTTOM OUTLIERS (boîte rouge)
+            #  ANALYSE BOTTOM OUTLIERS (boîte rouge)
             if T is TEXTS["en"]:
                 st.error(f"""
 **📊 Schools in Crisis (Negative Outliers):**
@@ -615,7 +615,7 @@ Ces établissements nécessitent une **intervention immédiate** : financement d
         no_data_msg = "Required columns not available or no data." if T is TEXTS["en"] else "Colonnes requises non disponibles ou pas de données."
         st.info(no_data_msg)
     
-    # 6) Méthode 4 : Analyse régionale détaillée (par département)
+    # methode 4 : Analyse par département
     st.markdown("---")
     method4_title = "**Method 4:** Detailed Regional Analysis" if T is TEXTS["en"] else "**Méthode 4 :** Analyse régionale détaillée"
     st.markdown(f"### {method4_title}")
@@ -633,7 +633,7 @@ Ces établissements nécessitent une **intervention immédiate** : financement d
                 bar_chart(dept_summary, x="departement", y="mean", 
                          title=dept_title, ref_y=0, ref_label="Expected (0)" if T is TEXTS["en"] else "Attendu (0)")
                 
-                # 📊 ANALYSE PAR DÉPARTEMENT (boîte colorée)
+                # ANALYSE PAR DÉPARTEMENT (boîte colorée)
                 best_dept = dept_summary.iloc[0]["departement"]
                 best_dept_va = dept_summary.iloc[0]["mean"]
                 worst_dept = dept_summary.iloc[-1]["departement"]
@@ -676,7 +676,7 @@ Les stratégies au niveau académique doivent être **différenciées par dépar
         no_data_msg = "Required columns not available." if T is TEXTS["en"] else "Colonnes requises non disponibles."
         st.info(no_data_msg)
     
-    # 7) Scatter: Candidats vs Performance (visualisation supplémentaire)
+    # scatter candidats vs taux de réussite
     st.markdown("---")
     st.subheader(T["candidates_vs"])
     if "nb_candidats_g" in df_acad_sess.columns and "taux_reussite_g" in df_acad_sess.columns:
@@ -685,7 +685,7 @@ Les stratégies au niveau académique doivent être **différenciées par dépar
                color="secteur" if "secteur" in df_acad_sess.columns else None, 
                title=scatter_title)
         
-        # 📊 ANALYSE SCATTER (boîte bleue)
+        # ANALYSE SCATTER (boîte bleue)
         corr = df_acad_sess[["nb_candidats_g", "taux_reussite_g"]].corr().iloc[0, 1] if len(df_acad_sess) > 3 else 0
         
         if T is TEXTS["en"]:
@@ -713,13 +713,13 @@ Don't judge schools by size alone. {"Small schools can excel with individualized
 Ne pas juger un établissement uniquement sur sa taille. {"Les petits peuvent exceller avec attention individualisée ; les grands peuvent réussir avec une organisation solide." if abs(corr) < 0.3 else "Les effets de taille existent mais sont médiés par les pratiques et le leadership de l'établissement."}
 """)
 
-    # 4) Distribution session courante
+    #  Distribution session courante
     st.subheader(T["distribution"])
     if "taux_reussite_g" in df_acad_sess.columns:
         dist_title = "Distribution of pass rate (G)" if T is TEXTS["en"] else "Distribution du taux de réussite (G)"
         histogram(df_acad_sess, x="taux_reussite_g", nbins=40, title=dist_title)
         
-        # 📊 ANALYSE DISTRIBUTION (boîte bleue)
+        # ANALYSE DISTRIBUTION (boîte bleue)
         rate_mean = df_acad_sess["taux_reussite_g"].mean()
         rate_median = df_acad_sess["taux_reussite_g"].median()
         rate_std = df_acad_sess["taux_reussite_g"].std()

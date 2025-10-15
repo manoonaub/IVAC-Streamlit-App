@@ -5,9 +5,6 @@ import numpy as np
 from utils.io import load_data
 from utils.prep import make_tables
 
-# =========================
-# i18n dictionary (static parts)
-# =========================
 TEXTS = {
     "en": {
         "language": "Language", "en": "English", "fr": "Français",
@@ -110,24 +107,20 @@ Considérez ce tableau de bord comme un **point de départ du dialogue**, pas un
 }
 
 # =========================
-# Lang helpers
-# =========================
 def _get_lang(default="fr") -> str:
     try:
         lang = st.query_params.get("lang", default)
         return lang if lang in ("en", "fr") else default
     except Exception:
         return default
-
+ 
 def _set_lang(lang: str):
     try:
         st.query_params["lang"] = lang
     except Exception:
         pass
 
-# =========================
-# Small utils
-# =========================
+
 def _fmt(x, fmt="{:.2f}", na="—"):
     try:
         if x is None or (isinstance(x, float) and np.isnan(x)):
@@ -143,11 +136,9 @@ def _safe_corr(df, a, b):
     except Exception:
         return None
 
-# =========================
-# Page
+
 # =========================
 def show():
-    # --- Language switcher ---
     current = _get_lang()
     st.sidebar.subheader(TEXTS[current]["language"])
     choice = st.sidebar.radio(
@@ -163,11 +154,11 @@ def show():
         st.rerun()
     T = TEXTS[choice]
 
-    # --- Header & intro ---
+    #  Header & intro 
     st.header(T["header"])
     st.info(T["intro"])
 
-    # --- Load data (robust) ---
+    # Load data (robust) 
     try:
         df_raw = load_data()
         tables = make_tables(df_raw)
@@ -184,7 +175,7 @@ def show():
     latest_session = int(df_over[session_col].max()) if (session_col and not df_over.empty) else None
     df_latest = df_over[df_over[session_col] == latest_session] if (latest_session is not None) else df_over
 
-    # --- Precompute metrics (safe) ---
+    # Precompute metrics 
     mean_va = float(df_latest["valeur_ajoutee"].mean()) if "valeur_ajoutee" in df_latest.columns and not df_latest.empty else None
     mean_rate = float(df_latest["taux_reussite_g"].mean()) if "taux_reussite_g" in df_latest.columns and not df_latest.empty else None
     sigma_va = float(df_latest["valeur_ajoutee"].std()) if "valeur_ajoutee" in df_latest.columns and not df_latest.empty else None
@@ -232,13 +223,10 @@ def show():
         ts_sorted = ts.dropna(subset=["session", "valeur_ajoutee"]).sort_values("session")
         if len(ts_sorted) >= 2:
             delta_va = float(ts_sorted["valeur_ajoutee"].iloc[-1] - ts_sorted["valeur_ajoutee"].iloc[0])
-
-    # =========================
-    # KEY FINDINGS (data-driven)
     # =========================
     st.markdown(f"## {T['key_findings_title']}")
 
-    # K1 — Territorial disparities
+    # Territorial disparities
     if choice == "fr":
         st.markdown(f"### {T['kf1_title']}")
         st.markdown(
@@ -258,7 +246,7 @@ def show():
         )
         st.caption("Interpretation: a large spread across regions signals persistent territorial disparities.")
 
-    # K2 — Sector gap
+    # Sector gap
     if choice == "fr":
         st.markdown(f"### {T['kf2_title']}")
         st.markdown(
@@ -276,7 +264,7 @@ def show():
         )
         st.caption("Reminder: statistical gap ≠ causality (selection, context).")
 
-    # K3 — Correlation pass rate vs VA
+    # Correlation pass rate vs VA
     if choice == "fr":
         st.markdown(f"### {T['kf3_title']}")
         if corr_rate_va is None:
@@ -298,7 +286,7 @@ def show():
                 "Association ≠ causation."
             )
 
-    # K4 — Stability over time
+    # Stability over time
     if choice == "fr":
         st.markdown(f"### {T['kf4_title']}")
         st.markdown(
@@ -314,9 +302,7 @@ def show():
         )
         st.caption("By design, national VA hovers around 0; multi-year tracking is still essential.")
 
-    # =========================
-    # Recommendations, limitations, next steps (static text)
-    # =========================
+    # Recommendations, limitations, next steps 
     st.markdown("---")
     st.markdown(f"## {T['recommendations_title']}")
     st.markdown(f"1. {T['rec1']}")
@@ -346,9 +332,7 @@ def show():
 
     st.markdown(T["final_message"])
 
-    # =========================
     # Quick stats (optional footer)
-    # =========================
     if not df_latest.empty and "valeur_ajoutee" in df_latest.columns:
         st.markdown("---")
         st.markdown(f"### {T['quick_stats']}")

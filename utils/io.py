@@ -65,10 +65,6 @@ def _coerce_and_sort(df: pd.DataFrame) -> pd.DataFrame:
     return d
 
 
-# -------------------------------
-# Public API
-# -------------------------------
-
 @st.cache_data(show_spinner=False)
 def load_data(
     path_or_url: str = "data/fr-en-indicateurs-valeur-ajoutee-colleges.csv",
@@ -90,7 +86,6 @@ def load_data(
 
     header_idx = _detect_header_index(raw_text)
     df = pd.read_csv(io.StringIO(raw_text), sep=sep, skiprows=header_idx, dtype=str)
-    # dtype=str first → avoid early mis-parsing; we coerce gently after
     df = _coerce_and_sort(df)
 
     return df
@@ -104,7 +99,6 @@ def fetch_csv(url: str, sep: str = ";", encoding: str = "utf-8") -> pd.DataFrame
     """
     resp = requests.get(url, timeout=60)
     resp.raise_for_status()
-    # respect provided encoding; utf-8 is fine for data.gouv
     return pd.read_csv(io.StringIO(resp.text), sep=sep, encoding=encoding)
 
 
