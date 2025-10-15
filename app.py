@@ -4,7 +4,7 @@ from urllib.parse import quote, unquote
 # Pages
 from sections import intro, overview, deep_dives, conclusions, profiling
 
-# ---------- Page config ----------
+#pag-
 st.set_page_config(
     page_title="IVAC – Value Added Indicators (French Middle Schools)",
     page_icon="🎓",
@@ -16,7 +16,6 @@ st.set_page_config(
     },
 )
 
-# ---------- Page registry (dict label -> module) ----------
 PAGES = {
     "Introduction": intro,
     "Data Quality & Profiling": profiling,
@@ -26,7 +25,6 @@ PAGES = {
 }
 LABELS = list(PAGES.keys())
 
-# ---------- URL state helpers ----------
 def set_query_page(name: str) -> None:
     """Update ?page= in the URL (no experimental API)."""
     try:
@@ -42,10 +40,10 @@ def get_query_page() -> str | None:
     except Exception:
         return None
 
-# ---------- Sidebar navigation ----------
+
 st.sidebar.title("📚 Menu")
 
-# 1) Determine default page BEFORE creating the radio
+
 page_from_url = get_query_page()
 if page_from_url in LABELS:
     default_label = page_from_url
@@ -54,20 +52,18 @@ elif st.session_state.get("nav_page") in LABELS:
 else:
     default_label = "Introduction"
 
-# 2) Create radio with a dedicated key (avoid conflicts)
+
 selected = st.sidebar.radio(
     "Go to:",
     LABELS,
     index=LABELS.index(default_label),
-    key="nav_page",  # <- clé du widget
+    key="nav_page",  
 )
 
-# 3) Keep everything in sync (session & URL)
+#
 set_query_page(selected)
-st.session_state["page"] = selected  # clé interne libre (utile pour tes boutons)
-# NB: ne pas réécrire st.session_state["nav_page"] ici (c'est le widget)
+st.session_state["page"] = selected  
 
-# ---------- Render selected page ----------
 try:
     PAGES[selected].show()
 except Exception:
