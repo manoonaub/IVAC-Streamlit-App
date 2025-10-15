@@ -233,20 +233,7 @@ st.metric(T["kpi_va"], f"{mean_va:+.2f}")
 
 ⚠️ **Critical reminder:** Use IVAC as a **conversation starter**, not a final judgment.
 
----
 
-## 🎥 Demo Video
-
-> **Coming soon:** 2-4 minute walkthrough of the app's narrative and key insights.
-
-**Planned content:**
-1. Introduction to IVAC and the dashboard
-2. National trends and territorial disparities
-3. Public vs Private comparison with statistical tests
-4. Deep dive into outlier schools
-5. Key recommendations for policymakers
-
----
 
 ## 🚀 Deployment
 
