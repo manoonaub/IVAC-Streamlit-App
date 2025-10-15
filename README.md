@@ -1,215 +1,161 @@
 # 🎓 IVAC Dashboard – French Middle School Performance Analysis
 
-> **Interactive data storytelling application exploring educational performance indicators (IVAC) for French middle schools**
+> **Interactive data storytelling dashboard analyzing educational performance indicators (IVAC) across French middle schools**
 
 [![Streamlit](https://img.shields.io/badge/Built%20with-Streamlit-FF4B4B?logo=streamlit)](https://streamlit.io)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org)
 [![License](https://img.shields.io/badge/License-Etalab%202.0-green)](https://www.etalab.gouv.fr/licence-ouverte-open-licence)
 
----
-
-## 📖 Project Overview
-
-This Streamlit application presents a comprehensive analysis of **IVAC (Indicateurs de Valeur Ajoutée des Collèges)** – value-added indicators that measure how much middle schools contribute to student success **beyond what's predicted** by their socio-economic background.
-
-### 🎯 Objective
-
-Transform raw open data into an **actionable narrative** that:
-- Reveals **territorial disparities** in educational performance
-- Compares **public vs private** sector outcomes
-- Identifies **best practices** from high-performing schools
-- Guides **evidence-based policy decisions**
-
-### 📊 The Story We Tell
-
-**Hook:** Not all schools start equal. Some elevate students beyond expectations; others fall short despite favorable conditions.
-
-**Journey:**
-1. **Introduction** → Understanding IVAC and why context matters
-2. **Data Quality** → Assessing reliability and limitations
-3. **Overview & Analysis** → National trends, regional gaps, and correlations
-4. **Deep Dives** → School-level insights, outliers, and success factors
-5. **Conclusions** → Key findings, recommendations, and next steps
-
-**Insight:** Value-added is a better metric than raw pass rates. Geographic and sectoral inequalities persist, but targeted interventions can work.
-
-**Implication:** Policymakers should prioritize support for low-VA regions and share practices from leaders.
+🖥️ **Live App:** [👉 IVAC Streamlit Dashboard](https://manoonaub-ivac-streamlit-app-app-x6gn6z.streamlit.app)
 
 ---
 
-## 🚀 Quick Start
+## 📖 **Project Overview**
 
-### 1. Install Dependencies
+This Streamlit application provides an **interactive and bilingual analysis** of the French Ministry of Education's *Indicateurs de Valeur Ajoutée des Collèges (IVAC)* dataset.
+
+It measures how much each school contributes to student success **beyond what is expected** given its socio-economic context.
+
+---
+
+## 🎯 **Objectives**
+
+Transform open public data into an **educational and interactive dashboard** that helps to:
+
+- Reveal **territorial disparities** in academic performance  
+- Compare **public vs private** school outcomes  
+- Highlight **best practices** among top-performing schools  
+- Support **data-driven educational policy decisions**
+
+---
+
+## 🧭 **Narrative Flow**
+
+**1️⃣ Introduction →** Understanding IVAC and its importance  
+**2️⃣ Data Quality →** Checking completeness and reliability  
+**3️⃣ Overview →** National analysis, trends, and key metrics  
+**4️⃣ Deep Dives →** Regional and school-level exploration  
+**5️⃣ Conclusions →** Insights, limitations, and recommendations  
+
+---
+
+## 🚀 **Quick Start**
+
+### 1️⃣ **Install dependencies**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Run the Application
+### 2️⃣ **Run the app**
 
 ```bash
 streamlit run app.py
 ```
 
-The app will open in your browser at `http://localhost:8501`.
+App will open at:
+👉 http://localhost:8501
 
-### 3. Explore the Data
+### 3️⃣ **Try it online**
 
-- Use **sidebar filters** to select sessions, regions, and sectors
-- Switch between **🇫🇷 French** and **🇬🇧 English** with the language toggle
-- Hover over charts for **detailed tooltips**
-- Follow the **navigation guide** in the intro section
-
-## 🚀 Deployment
-
-### Deploy to Streamlit Community Cloud
-
-1. **Fork this repository** on GitHub
-2. **Connect to Streamlit Cloud**:
-   - Go to [share.streamlit.io](https://share.streamlit.io)
-   - Click "New app"
-   - Select your forked repository
-   - Set main file path: `app.py`
-   - Click "Deploy"
-
-3. **Your app will be live** at: `https://your-username-streamlit-app-xxx.streamlit.app`
-
-### Alternative: Local Development
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/StreamlitApp25_IVAC.git
-cd StreamlitApp25_IVAC
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run locally
-streamlit run app.py
-```
+🔗 https://manoonaub-ivac-streamlit-app-app-x6gn6z.streamlit.app
 
 ---
 
-## 📂 Project Structure
+## 📂 **Project Structure**
 
 ```
-StreamlitApp25_IVAC/
+IVAC-Streamlit-App/
 │
-├── app.py                          # Main entry point
-├── requirements.txt                # Python dependencies
-├── README.md                       # This file
+├── app.py                        # Main Streamlit entry point
+├── requirements.txt              # Dependencies
+├── README.md                     # Documentation
 │
 ├── data/
-│   └── fr-en-indicateurs-valeur-ajoutee-colleges.csv  # IVAC dataset
+│   └── fr-en-indicateurs-valeur-ajoutee-colleges.csv
 │
 ├── assets/
-│   └── fr_departements.geojson     # GeoJSON for choropleth maps
+│   └── fr_departements.geojson   # GeoJSON file for choropleth maps
 │
-├── sections/                       # Page modules
-│   ├── intro.py                    # Context & methodology
-│   ├── profiling.py                # Data quality checks
-│   ├── overview.py                 # KPIs, trends, maps, synthesis
-│   ├── deep_dives.py               # School-level analysis
-│   └── conclusions.py              # Insights & recommendations
+├── sections/
+│   ├── intro.py                  # Context & introduction
+│   ├── profiling.py              # Data quality checks
+│   ├── overview.py               # Trends, KPIs, maps
+│   ├── deep_dives.py             # Detailed analysis
+│   └── conclusions.py            # Insights & recommendations
 │
-└── utils/                          # Reusable utilities
-    ├── io.py                       # Data loading & caching
-    ├── prep.py                     # Cleaning & aggregation
-    ├── viz.py                      # Chart templates (Plotly)
-    └── geo.py                      # Geographic mapping
+└── utils/
+    ├── io.py, prep.py, viz.py, geo.py  # Helper scripts
 ```
 
 ---
 
-## 🎨 Key Features
+## 🎨 **Key Features**
 
-### 📈 Interactive Visualizations
-- **Line charts** with performance zones (excellence, weak)
-- **Bar charts** for regional rankings (top/bottom)
-- **Choropleth maps** showing departmental disparities
-- **Histograms** with reference lines (mean, expected value)
-- **Box plots** for sector comparison (Public vs Private)
-- **Heatmaps** for correlation matrices
-- **Scatter plots** for school-level deep dives
+### 📈 **Interactive Visualizations**
+- Choropleth maps by department
+- Boxplots comparing Public vs Private sectors
+- Top & Bottom 10 regional rankings
+- Correlation scatterplots
+- Histograms with thresholds and annotations
 
-### 🌍 Bilingual Support (FR/EN)
-- Complete interface translation
-- Dynamic chart labels and annotations
-- Context-aware explanations
+### 🌍 **Bilingual Interface**
+- 🇫🇷 French / 🇬🇧 English toggle
+- Dynamic text, chart titles, and tooltips
 
-### ♿ Accessibility (WCAG Compliant)
-- High-contrast color schemes
-- Meaningful axis labels and titles
-- Descriptive tooltips and captions
-- Screen-reader friendly structure
+### 🧠 **Educational Insights**
+- Structured "storytelling" navigation
+- Policy implications highlighted with icons
+- Contextual warnings (correlation ≠ causation)
 
-### ⚡ Performance Optimizations
-- `@st.cache_data` for data loading
-- Pre-aggregated tables (timeseries, regions, departments)
-- Efficient Plotly charts with vectorized operations
-
-### 🎓 Storytelling Elements
-- **TL;DR summaries** with key metrics
-- **Narrative transitions** between sections ("Step 1 → Trends")
-- **Policy implications** highlighted with custom badges
-- **Contextual warnings** (e.g., "correlation ≠ causation")
+### ⚡ **Optimizations**
+- Cached data loading with `@st.cache_data`
+- Pre-aggregated tables for speed
+- Lightweight structure for quick deployment
 
 ---
 
-## 📊 Data Source
+## 📚 **Data Source**
 
-- **Dataset:** [Indicateurs de valeur ajoutée des collèges](https://www.data.gouv.fr/fr/datasets/indicateurs-de-valeur-ajoutee-des-colleges/)
-- **Provider:** Ministère de l'Éducation nationale (French Ministry of Education)
-- **License:** [Licence Ouverte / Open License 2.0 (Etalab)](https://www.etalab.gouv.fr/licence-ouverte-open-licence)
-- **Coverage:** French middle schools (collèges), multiple academic sessions
-- **Metrics:** Value-added (VA), pass rates, candidate counts, sectoral data
-
-### 🔍 What is IVAC?
-
-**Value-Added (Valeur Ajoutée)** measures the difference between:
-- **Observed performance** (actual pass rates)
-- **Expected performance** (predicted based on student backgrounds, school context)
-
-**Interpretation:**
-- **VA > 0:** School performs **better than expected** (adds value)
-- **VA ≈ 0:** School performs **as expected** (neutral)
-- **VA < 0:** School performs **below expectations** (needs support)
+- **Dataset:** Indicateurs de valeur ajoutée des collèges
+- **Provider:** Ministère de l'Éducation nationale
+- **License:** Licence Ouverte 2.0 (Etalab)
+- **Years:** 2022 → 2024
+- **Variables:**
+  - Valeur Ajoutée (VA)
+  - Taux de Réussite au DNB
+  - Secteur (Public/Privé)
+  - Nombre de candidats
 
 ---
 
-## 🎯 Learning Objectives Achieved
+## 🎓 **Learning Objectives**
 
-✅ **Data Storytelling:** Clear narrative arc (problem → analysis → insights → recommendations)  
-✅ **Data Quality:** Profiling, validation, transparency about limitations  
-✅ **Interactive Dashboard:** Filters, multi-page navigation, responsive design  
-✅ **EDA & Analytics:** Aggregations, correlations, t-tests, clustering (optional)  
-✅ **Visualization Best Practices:** Appropriate chart types, annotations, color choices  
-✅ **Reproducibility:** Pinned dependencies, modular code, clear documentation  
+✅ Master data storytelling through real-world data  
+✅ Create interactive and bilingual dashboards  
+✅ Apply statistical tools (correlation, regression, t-tests)  
+✅ Visualize educational inequalities effectively  
+✅ Communicate analytical insights clearly and ethically  
 
 ---
 
-## 📐 Technical Highlights
+## 🧩 **Technical Highlights**
 
-### Caching Strategy
+### **Cached Data Example**
 ```python
 @st.cache_data(show_spinner=False)
 def load_data():
     return pd.read_csv("data/fr-en-indicateurs-valeur-ajoutee-colleges.csv")
 ```
 
-### Reusable Chart Functions
+### **Linear Regression Example**
 ```python
-from utils.viz import line_chart, bar_chart, histogram
-
-line_chart(df, x="session_str", y="valeur_ajoutee", 
-           title="VA Trend", 
-           ref_y=0, ref_label="Expected",
-           threshold_zones=[
-               {"y0": 5, "y1": 15, "color": "green", "opacity": 0.15, "label": "Excellence"}
-           ])
+from sklearn.linear_model import LinearRegression
+model = LinearRegression().fit(X, y)
+st.metric("R²", f"{model.score(X, y):.3f}")
 ```
 
-### Bilingual Support
+### **Language Adaptation**
 ```python
 T = TEXTS["fr"] if lang == "fr" else TEXTS["en"]
 st.metric(T["kpi_va"], f"{mean_va:+.2f}")
@@ -217,97 +163,207 @@ st.metric(T["kpi_va"], f"{mean_va:+.2f}")
 
 ---
 
-## 🧪 Data Quality & Limitations
+## ⚠️ **Limitations**
 
-### Strengths
-- Large sample size (thousands of schools)
-- Multiple sessions for longitudinal analysis
-- Contextualized metrics (value-added adjusts for background)
-
-### Limitations
-- **IVAC ≠ absolute quality** — VA measures relative performance vs predictions, not pedagogical excellence
-- **Socio-economic proxies are imperfect** — Cannot fully capture student diversity
-- **DNB is one test** — Doesn't measure creativity, critical thinking, long-term success
-- **Small schools have high variance** — Outliers may reflect sample size, not quality
-- **Missing data** — Some schools/sessions incomplete
-
-⚠️ **Critical reminder:** Use IVAC as a **conversation starter**, not a final judgment.
-
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 966fdf9d49653e6eb81748e0546cb22d2954b147
-## 🚀 Deployment
-
-### Streamlit Community Cloud (Recommended)
-
-1. Push this repository to GitHub
-2. Go to [share.streamlit.io](https://share.streamlit.io)
-3. Connect your GitHub repo
-4. Deploy! 🎉
-
-**Note:** Ensure `requirements.txt` and `data/` folder are committed.
-
-### Alternative: Local Network
-
-```bash
-streamlit run app.py --server.port 8080 --server.address 0.0.0.0
-```
-
-Access from other devices on your network via `http://<your-ip>:8080`.
+- **VA ≠ Absolute Quality** → It's context-adjusted
+- **Socio-economic proxies are imperfect**
+- **Small schools show higher variability**
+- **DNB captures only a part of educational outcomes**
+- **Yearly variations may reflect temporary conditions**
 
 ---
 
-## 📚 Educational Context
+## 🏫 **Academic Context**
 
-This project was developed as part of the **EFREI Paris Data Visualization & Storytelling** course (2025). It demonstrates:
+This project was developed as part of the  
+🎓 **EFREI Paris – M1 Data & Artificial Intelligence**  
+**Module:** Data Visualization & Storytelling
 
-- **Open data reuse** (data.gouv.fr)
-- **Statistical literacy** (value-added models, hypothesis testing)
-- **Ethical data communication** (transparency, caveats, avoiding causal claims)
-- **Policy relevance** (actionable recommendations)
-
-**Course hashtags:** `#EFREIDataStories2025` `#DataVisualization` `#Streamlit`
-
----
-
-## 🤝 Contributing
-
-This is a student project, but feedback is welcome!
-
-**Suggestions:**
-- Report bugs via GitHub Issues
-- Propose features or improvements
-- Share educational use cases
+📅 **Year:** 2025  
+👩‍💻 **Student:** Manon Aubel  
+🏫 **Institution:** EFREI Paris  
 
 ---
 
-## 📜 License
+## 📜 **License**
 
-- **Code:** Open source (MIT-style, adjust as needed)
-- **Data:** [Licence Ouverte 2.0 (Etalab)](https://www.etalab.gouv.fr/licence-ouverte-open-licence)
-
-**Citation:**
-> Ministère de l'Éducation nationale, *Indicateurs de valeur ajoutée des collèges*, [data.gouv.fr](https://www.data.gouv.fr), retrieved 2025.
+- **Code:** MIT-style open license
+- **Data:** Etalab Licence Ouverte 2.0
 
 ---
 
-## 🙏 Acknowledgments
+## 🙏 **Acknowledgments**
 
 - **Data provider:** Ministère de l'Éducation nationale
-- **Open data platform:** data.gouv.fr (Etalab)
-- **Framework:** Streamlit team
-- **Inspiration:** [FT Visual Vocabulary](https://github.com/Financial-Times/chart-doctor/tree/main/visual-vocabulary), Data Viz Society
+- **Framework:** Streamlit
+- **School:** EFREI Paris
+- **Platform:** data.gouv.fr (Etalab initiative)
 
 ---
 
-## 📧 Contact
+## 📧 **Contact**
 
-**Student:** Manon Aubel  
+**Author:** Manon Aubel  
 **Institution:** EFREI Paris  
-**Course:** Data Visualization & Storytelling 2025
+**App:** https://manoonaub-ivac-streamlit-app-app-x6gn6z.streamlit.app
 
 ---
 
 **Built with ❤️ and Streamlit 🎈**
+
+---
+
+# 🇫🇷 **Tableau de Bord IVAC – Analyse des Collèges Français**
+
+> **Application interactive d'analyse des indicateurs de valeur ajoutée (IVAC) dans les collèges français**
+
+🖥️ **Application en ligne :** [👉 Tableau de bord IVAC](https://manoonaub-ivac-streamlit-app-app-x6gn6z.streamlit.app)
+
+---
+
+## 📖 **Présentation du Projet**
+
+Cette application Streamlit permet une analyse interactive et bilingue des Indicateurs de Valeur Ajoutée des Collèges (IVAC) publiés par le Ministère de l'Éducation nationale.
+
+Elle évalue dans quelle mesure les établissements contribuent à la réussite de leurs élèves au-delà de ce qui est attendu compte tenu du contexte socio-économique.
+
+---
+
+## 🎯 **Objectifs**
+
+Transformer des données publiques ouvertes en un tableau de bord interactif permettant de :
+- Mettre en évidence les inégalités territoriales
+- Comparer les performances du secteur public et privé
+- Identifier les bonnes pratiques des établissements performants
+- Aider à la prise de décision éducative fondée sur les données
+
+---
+
+## 🧭 **Structure Narrative**
+
+**1️⃣ Introduction →** Comprendre le concept d'IVAC  
+**2️⃣ Qualité des Données →** Vérifications et nettoyage  
+**3️⃣ Vue d'Ensemble →** Tendances et performances nationales  
+**4️⃣ Analyses Approfondies →** Par région, secteur et établissement  
+**5️⃣ Conclusions →** Enseignements et recommandations  
+
+---
+
+## 🚀 **Démarrage Rapide**
+
+### 1️⃣ **Installer les dépendances**
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2️⃣ **Lancer l'application**
+
+```bash
+streamlit run app.py
+```
+
+Ouvrir dans le navigateur :
+👉 http://localhost:8501
+
+### 3️⃣ **Tester en ligne**
+
+🔗 https://manoonaub-ivac-streamlit-app-app-x6gn6z.streamlit.app
+
+---
+
+## 📂 **Structure du Projet**
+
+```
+IVAC-Streamlit-App/
+│
+├── app.py                        # Script principal
+├── requirements.txt              # Dépendances Python
+├── README.md                     # Documentation
+│
+├── data/
+│   └── fr-en-indicateurs-valeur-ajoutee-colleges.csv
+│
+├── assets/
+│   └── fr_departements.geojson   # Carte des départements
+│
+├── sections/
+│   ├── intro.py                  # Introduction & contexte
+│   ├── profiling.py              # Qualité des données
+│   ├── overview.py               # Tendances et cartes
+│   ├── deep_dives.py             # Analyses locales
+│   └── conclusions.py            # Recommandations
+│
+└── utils/
+    ├── io.py, prep.py, viz.py, geo.py  # Fonctions d'aide
+```
+
+---
+
+## 🎨 **Fonctionnalités Principales**
+
+- **Cartes interactives** par département
+- **Classement des régions** (Top/Bottom 10)
+- **Comparaison Public vs Privé** (boxplots)
+- **Corrélations** entre indicateurs
+- **Histogrammes et nuages de points**
+- **Interface bilingue** FR/EN
+
+---
+
+## 🧠 **Enseignements et Objectifs Pédagogiques**
+
+✅ Démontrer une approche de data storytelling  
+✅ Appliquer des méthodes statistiques de base  
+✅ Concevoir un tableau de bord clair et pédagogique  
+✅ Visualiser les inégalités territoriales  
+✅ Communiquer les résultats de manière éthique et compréhensible  
+
+---
+
+## ⚠️ **Limites**
+
+- **La VA n'est pas un indicateur absolu de qualité**
+- **Les variables socio-économiques ne capturent pas toute la réalité**
+- **Les petits établissements présentent plus de variance**
+- **Le DNB ne mesure qu'une partie des compétences**
+
+---
+
+## 🏫 **Contexte Académique**
+
+Projet réalisé dans le cadre du  
+🎓 **Master 1 Data & Intelligence Artificielle – EFREI Paris**  
+**Module :** Data Visualization & Storytelling
+
+📅 **Année :** 2025  
+👩‍💻 **Étudiante :** Manon Aubel  
+🏫 **Établissement :** EFREI Paris  
+
+---
+
+## 📜 **Licence**
+
+- **Code :** Open Source (MIT)
+- **Données :** Licence Ouverte Etalab 2.0
+
+---
+
+## 🙏 **Remerciements**
+
+- **Ministère de l'Éducation nationale** – Fournisseur des données
+- **Streamlit** – Framework de visualisation
+- **EFREI Paris** – Encadrement académique
+- **data.gouv.fr** – Plateforme open data
+
+---
+
+## 📧 **Contact**
+
+**Auteur :** Manon Aubel  
+**Établissement :** EFREI Paris  
+**Application :** https://manoonaub-ivac-streamlit-app-app-x6gn6z.streamlit.app
+
+---
+
+**Développé avec ❤️ et Streamlit 🎈**
