@@ -1,10 +1,24 @@
 # utils/prep.py
 import re
 from typing import Dict, Tuple
-import numpy as np
 import pandas as pd
 
 # --- 1) Low-level Helpers ---
+
+def _ensure_session_str(df: pd.DataFrame | None) -> pd.DataFrame | None:
+    """
+    Add a string version of session column if missing (returns copy or None).
+    Used for filtering and display across the app.
+    """
+    if df is None or df.empty:
+        return df
+    if "session" in df.columns and "session_str" not in df.columns:
+        df = df.copy()
+        df["session"] = df["session"].astype("Int64")
+        df["session_str"] = df["session"].astype(str)
+    return df
+
+
 def _to_snake(s: str) -> str:
     """Converts a string to snake_case (e.g., 'Taux de réussite G' -> 'taux_de_reussite_g')."""
     s = str(s).strip().lower()

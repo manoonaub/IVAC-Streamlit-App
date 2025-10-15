@@ -58,7 +58,35 @@ The app will open in your browser at `http://localhost:8501`.
 - Use **sidebar filters** to select sessions, regions, and sectors
 - Switch between **🇫🇷 French** and **🇬🇧 English** with the language toggle
 - Hover over charts for **detailed tooltips**
-- Download filtered data as **CSV** from Deep Dives page
+- Follow the **navigation guide** in the intro section
+
+## 🚀 Deployment
+
+### Deploy to Streamlit Community Cloud
+
+1. **Fork this repository** on GitHub
+2. **Connect to Streamlit Cloud**:
+   - Go to [share.streamlit.io](https://share.streamlit.io)
+   - Click "New app"
+   - Select your forked repository
+   - Set main file path: `app.py`
+   - Click "Deploy"
+
+3. **Your app will be live** at: `https://your-username-streamlit-app-xxx.streamlit.app`
+
+### Alternative: Local Development
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/StreamlitApp25_IVAC.git
+cd StreamlitApp25_IVAC
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run locally
+streamlit run app.py
+```
 
 ---
 

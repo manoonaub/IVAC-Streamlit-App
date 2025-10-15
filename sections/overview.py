@@ -6,8 +6,8 @@ import plotly.express as px
 import numpy as np
 
 from utils.io import load_data
-from utils.prep import make_tables
-from utils.viz import line_chart, bar_chart, histogram, scatter
+from utils.prep import make_tables, _ensure_session_str
+from utils.viz import bar_chart, histogram
 from utils.geo import load_geojson, map_chart
 
 # Bilingual texts
@@ -26,8 +26,8 @@ TEXTS = {
         
         # KPIs
         "exec_title": "🎯 Key Performance Indicators",
-        "kpi_rate": "🎓 Avg pass rate",
-        "kpi_va": "📈 Avg value added",
+        "kpi_rate": " Avg pass rate",
+        "kpi_va": " Avg value added",
         "kpi_sigma": "📊 Dispersion (σ)",
         "kpi_n": "Schools",
         "exec_success": "✅ **Excellent performance**: strong value added nationally.",
@@ -88,7 +88,7 @@ TEXTS = {
         "language": "Langue", "en": "English", "fr": "Français",
         "header": "🎯 Vue d'ensemble & Analyse",
         "intro": "📊 Cette page fournit une vue complète des résultats IVAC : tendances, disparités territoriales, comparaison sectorielle et synthèse des insights clés.",
-        
+
         # Filters
         "filters_title": "🔧 Filtres",
         "filter_session": "📅 Session",
@@ -171,15 +171,6 @@ def _set_lang(lang: str):
     except Exception:
         pass
 
-def _ensure_session_str(df: pd.DataFrame | None) -> pd.DataFrame | None:
-    if df is None or len(getattr(df, "columns", [])) == 0:
-        return df
-    if "session" in df.columns and "session_str" not in df.columns:
-        df = df.copy()
-        df["session"] = df["session"].astype("Int64")
-        df["session_str"] = df["session"].astype(str)
-    return df
-
 def show():
     # Language switcher
     current = _get_lang()
@@ -250,6 +241,34 @@ def show():
 
     # ==================== SECTION 1: KPIs ====================
     st.markdown(f"### {T['exec_title']}")
+    
+    # Guidance for interpretation
+    with st.expander("ℹ️ How to Read These Indicators?" if T is TEXTS["en"] else "ℹ️ Comment lire ces indicateurs ?"):
+        if T is TEXTS["en"]:
+            st.markdown("""
+**Value Added (VA):**
+- **VA > 2**: Excellent performance (well above expectations)
+- **VA between -2 and 2**: Within expectations (standard)
+- **VA < -2**: Challenges detected (below expectations)
+
+**Dispersion (σ):**
+- **σ < 4**: Low inequality (homogeneous performance)
+- **σ between 4 and 6**: Moderate inequality
+- **σ > 6**: High inequality (strong territorial disparities)
+""")
+        else:
+            st.markdown("""
+**Valeur Ajoutée (VA) :**
+- **VA > 2** : Performance excellente (bien au-dessus des attentes)
+- **VA entre -2 et 2** : Conforme aux attentes (standard)
+- **VA < -2** : Difficultés détectées (en-dessous des attentes)
+
+**Dispersion (σ) :**
+- **σ < 4** : Faible inégalité (performance homogène)
+- **σ entre 4 et 6** : Inégalité modérée
+- **σ > 6** : Forte inégalité (disparités territoriales marquées)
+""")
+    
     if not df_view.empty:
         mean_va = df_view["valeur_ajoutee"].mean() if "valeur_ajoutee" in df_view.columns else 0.0
         mean_rate = df_view["taux_reussite_g"].mean() if "taux_reussite_g" in df_view.columns else 0.0
@@ -283,13 +302,13 @@ def show():
             fig.add_trace(go.Scatter(
                 x=ts["session_str"], y=ts["valeur_ajoutee"],
                 name=T["kpi_va"], mode="lines+markers",
-                line=dict(color="#2E86AB", width=3), marker=dict(size=8)
+                line=dict(color="#3b82f6", width=4), marker=dict(size=10, line=dict(width=2, color='white'))
             ))
             if "taux_reussite_g" in ts.columns:
                 fig.add_trace(go.Scatter(
                     x=ts["session_str"], y=ts["taux_reussite_g"],
                     name=T["kpi_rate"], mode="lines+markers",
-                    line=dict(color="#A23B72", width=3, dash="dash"),
+                    line=dict(color="#10b981", width=4, dash="dash"),
                     marker=dict(size=8), yaxis="y2"
                 ))
             
@@ -297,9 +316,20 @@ def show():
                 title=T["multi_title"],
                 yaxis=dict(title=T["kpi_va"], side="left", color="#2E86AB"),
                 yaxis2=dict(title=T["kpi_rate"], side="right", overlaying="y", color="#A23B72"),
-                hovermode="x unified", height=450
+                hovermode="x unified", height=450,
+                annotations=[
+                    dict(
+                        x=0.02, y=0.98,
+                        xref="paper", yref="paper",
+                        text="📈 Rising = Improvement<br>📉 Falling = Decline",
+                        showarrow=False,
+                        bgcolor="rgba(255,255,255,0.8)",
+                        bordercolor="gray",
+                        borderwidth=1
+                    )
+                ]
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True, key="trend_chart")
             st.caption(T["multi_note"])
         else:
             st.info(T["insufficient_data"])
@@ -394,8 +424,9 @@ def show():
             fig = px.box(
                 df_sector, x="secteur", y="valeur_ajoutee",
                 title=T["sector_box"], color="secteur",
-                color_discrete_map={"PU": "#3498db", "PR": "#e74c3c"}
+                color_discrete_map={"PU": "#3b82f6", "PR": "#f59e0b"}
             )
+            fig.update_traces(marker=dict(size=8))
             st.plotly_chart(fig, use_container_width=True)
             
             # Statistical test

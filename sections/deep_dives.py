@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from utils.io import load_data
-from utils.prep import make_tables, profile_dataframe
+from utils.prep import make_tables
 from utils.viz import bar_chart, histogram, line_chart, scatter
 
 
@@ -51,8 +51,6 @@ They reveal **hidden dynamics** behind averages and pave the way for reflection 
         "intra_academy": "Intra-academy comparison – schools (selected session)",
         "candidates_vs": "Candidates vs performance",
         "distribution": "Distribution (selected session)",
-        "full_table": "Full filtered table",
-        "export_csv": "Export CSV (filtered)",
     },
     "fr": {
         "language": "Langue", "en": "English", "fr": "Français",
@@ -99,8 +97,6 @@ Elles révèlent les **dynamiques cachées** derrière les moyennes et ouvrent l
         "intra_academy": "Comparaison intra-académique – établissements (session sélectionnée)",
         "candidates_vs": "Candidats vs performance",
         "distribution": "Distribution (session sélectionnée)",
-        "full_table": "Table complète filtrée",
-        "export_csv": "Exporter CSV (filtré)",
     }
 }
 
@@ -175,8 +171,7 @@ def show():
     # Charger les données
     df_raw = load_data()
     tables = make_tables(df_raw)
-    prof = profile_dataframe(df_raw)
-    df_std = prof["standardized"]
+    df_std = tables["cleaned"]
 
     # Filtres
     with st.sidebar:
@@ -231,6 +226,48 @@ def show():
                       title=title_va,
                       ref_y=0, ref_label=expected_label,
                       threshold_zones=zones_school)
+            
+            # 📊 ANALYSE DU GRAPHIQUE (dans boîte colorée)
+            va_values = df_etab["valeur_ajoutee"].dropna()
+            if len(va_values) >= 2:
+                va_mean = va_values.mean()
+                va_trend = va_values.iloc[-1] - va_values.iloc[0]
+                
+                # Choisir la couleur selon la performance
+                if va_mean > 2:
+                    analysis_container = st.success  # Vert pour bonne performance
+                elif va_mean < -2:
+                    analysis_container = st.error  # Rouge pour difficultés
+                else:
+                    analysis_container = st.info  # Bleu pour standard
+                
+                if T is TEXTS["en"]:
+                    analysis_container(f"""
+**📊 What we observe:**
+- **Trajectory:** The school's value added {f"**increased by {va_trend:+.2f} points**" if va_trend > 0 else f"**decreased by {abs(va_trend):.2f} points**" if va_trend < 0 else "remained **stable**"} over the observed sessions.
+- **Average performance:** **{va_mean:+.2f}** (vs 0 expected).
+- **Consistency:** {"Stable performance, little volatility." if va_values.std() < 2 else "Significant fluctuations detected — possible cohort or staff changes."}
+
+**🧠 Interpretation:**
+{f"This school **consistently outperforms** expectations across multiple sessions. Likely due to strong pedagogical practices or favorable student composition." if va_mean > 2 else f"The school struggles to reach expected levels. May require targeted support or faces structural challenges." if va_mean < -2 else "Performance is **in line with expectations** given the school's context."}
+
+**💡 Conclusion:**
+{"🌟 **Best practice candidate** — consider studying this school's methods for replication." if va_mean > 3 else "⚠️ **Requires attention** — investigate root causes and implement interventions." if va_mean < -3 else "✅ **Standard trajectory** — monitor for consistency."}
+""")
+                else:
+                    analysis_container(f"""
+**📊 Ce que l'on observe :**
+- **Trajectoire :** La valeur ajoutée de l'établissement {f"**a augmenté de {va_trend:+.2f} points**" if va_trend > 0 else f"**a diminué de {abs(va_trend):.2f} points**" if va_trend < 0 else "est restée **stable**"} sur les sessions observées.
+- **Performance moyenne :** **{va_mean:+.2f}** (vs 0 attendu).
+- **Constance :** {"Performance stable, peu de volatilité." if va_values.std() < 2 else "Fluctuations significatives détectées — possibles changements de cohorte ou d'équipe."}
+
+**🧠 Interprétation :**
+{f"Cet établissement **sur-performe constamment** les attentes sur plusieurs sessions. Probablement dû à des pratiques pédagogiques solides ou une composition d'élèves favorable." if va_mean > 2 else f"L'établissement peine à atteindre les niveaux attendus. Peut nécessiter un soutien ciblé ou fait face à des défis structurels." if va_mean < -2 else "La performance est **conforme aux attentes** compte tenu du contexte de l'établissement."}
+
+**💡 Conclusion :**
+{"🌟 **Candidat bonnes pratiques** — envisager d'étudier les méthodes de cet établissement pour réplication." if va_mean > 3 else "⚠️ **Nécessite attention** — investiguer les causes profondes et mettre en place des interventions." if va_mean < -3 else "✅ **Trajectoire standard** — surveiller pour cohérence."}
+""")
+        
         if "taux_reussite_g" in df_etab.columns and not df_etab.empty:
             # Pass rate thresholds
             excellent_rate = "Excellent (>90%)" if T is TEXTS["en"] else "Excellent (>90%)"
@@ -244,6 +281,43 @@ def show():
                       title=title_rate,
                       ref_y=87, ref_label=nat_avg_label,
                       threshold_zones=zones_rate)
+            
+            # 📊 ANALYSE TAUX DE RÉUSSITE (dans boîte colorée)
+            rate_values = df_etab["taux_reussite_g"].dropna()
+            if len(rate_values) >= 2:
+                rate_mean = rate_values.mean()
+                rate_trend = rate_values.iloc[-1] - rate_values.iloc[0]
+                
+                # Couleur selon la performance
+                if rate_mean > 87:
+                    rate_container = st.success  # Vert
+                elif rate_mean < 85:
+                    rate_container = st.warning  # Jaune/orange
+                else:
+                    rate_container = st.info  # Bleu
+                
+                if T is TEXTS["en"]:
+                    rate_container(f"""
+**📊 Pass Rate Analysis:**
+- **Trend:** Pass rate {f"**increased by {rate_trend:+.1f}%**" if rate_trend > 1 else f"**decreased by {abs(rate_trend):.1f}%**" if rate_trend < -1 else "remained **stable**"}.
+- **Average:** **{rate_mean:.1f}%** (vs national ~87%).
+- **Performance level:** {"**Above national average** ✅" if rate_mean > 87 else "**Below national average** ⚠️" if rate_mean < 87 else "**At national level**"}
+
+**💡 Key Insight:**
+Compare this graph with the value-added chart above. If pass rates are high but VA is low, the school may benefit from favorable student composition rather than pedagogical excellence. Conversely, high VA with moderate pass rates indicates **strong teaching despite challenging contexts**.
+""")
+                else:
+                    rate_container(f"""
+**📊 Analyse du Taux de Réussite :**
+- **Évolution :** Le taux {f"**a augmenté de {rate_trend:+.1f}%**" if rate_trend > 1 else f"**a diminué de {abs(rate_trend):.1f}%**" if rate_trend < -1 else "est resté **stable**"}.
+- **Moyenne :** **{rate_mean:.1f}%** (vs nationale ~87%).
+- **Niveau de performance :** {"**Au-dessus de la moyenne nationale** ✅" if rate_mean > 87 else "**En-dessous de la moyenne nationale** ⚠️" if rate_mean < 87 else "**Au niveau national**"}
+
+**💡 Insight Clé :**
+Comparez ce graphique avec celui de la valeur ajoutée ci-dessus. Si les taux sont élevés mais la VA faible, l'établissement bénéficie peut-être d'une composition d'élèves favorable plutôt que d'une excellence pédagogique. À l'inverse, une VA élevée avec des taux modérés indique un **enseignement solide malgré des contextes difficiles**.
+""")
+        
+        st.markdown("---")
 
     # 2) Comparaison intra-académie (Top/Bottom sur session)
     st.subheader(T["intra_academy"])
@@ -256,7 +330,68 @@ def show():
             bottom_title = f"Bottom {top_n} – {rank_metric}" if T is TEXTS["en"] else f"Bottom {top_n} – {rank_metric}"
             
             bar_chart(df_rank.head(top_n), x="nom_de_l_etablissement", y=rank_metric, title=top_title, download_name="top_schools.png")
+            
+            # 📊 ANALYSE TOP PERFORMERS (boîte verte = succès)
+            top_values = df_rank.head(top_n)[rank_metric]
+            if T is TEXTS["en"]:
+                st.success(f"""
+**📊 Top Performers Analysis:**
+- **Range:** {top_values.min():.2f} to {top_values.max():.2f}
+- **Average of top {top_n}:** {top_values.mean():.2f}
+- **Standout leader:** **{df_rank.iloc[0]['nom_de_l_etablissement']}** with {df_rank.iloc[0][rank_metric]:.2f}
+
+**🧠 What this reveals:**
+These schools demonstrate **exceptional performance** within the academy. The gap between #1 and #{top_n} ({(top_values.max() - top_values.min()):.2f} points) indicates {"high variability — even among top performers" if (top_values.max() - top_values.min()) > 3 else "consistent excellence across the top tier"}.
+
+**💡 Action:** Conduct case studies on these schools to identify transferable best practices (teaching methods, student support systems, resource allocation).
+""")
+            else:
+                st.success(f"""
+**📊 Analyse des Meilleurs Établissements :**
+- **Fourchette :** {top_values.min():.2f} à {top_values.max():.2f}
+- **Moyenne du top {top_n} :** {top_values.mean():.2f}
+- **Leader incontesté :** **{df_rank.iloc[0]['nom_de_l_etablissement']}** avec {df_rank.iloc[0][rank_metric]:.2f}
+
+**🧠 Ce que cela révèle :**
+Ces établissements démontrent des **performances exceptionnelles** au sein de l'académie. L'écart entre le #1 et le #{top_n} ({(top_values.max() - top_values.min()):.2f} points) indique {"une forte variabilité — même parmi les meilleurs" if (top_values.max() - top_values.min()) > 3 else "une excellence cohérente dans le top tier"}.
+
+**💡 Action :** Conduire des études de cas sur ces établissements pour identifier les bonnes pratiques transférables (méthodes d'enseignement, systèmes de soutien, allocation des ressources).
+""")
+            
             bar_chart(df_rank.tail(top_n), x="nom_de_l_etablissement", y=rank_metric, title=bottom_title, download_name="bottom_schools.png")
+            
+            # 📊 ANALYSE BOTTOM PERFORMERS (boîte rouge/orange = attention requise)
+            bottom_values = df_rank.tail(top_n)[rank_metric]
+            if T is TEXTS["en"]:
+                st.warning(f"""
+**📊 Schools Requiring Support:**
+- **Range:** {bottom_values.min():.2f} to {bottom_values.max():.2f}
+- **Average of bottom {top_n}:** {bottom_values.mean():.2f}
+- **Most challenging:** **{df_rank.iloc[-1]['nom_de_l_etablissement']}** with {df_rank.iloc[-1][rank_metric]:.2f}
+
+**🧠 Root Cause Hypotheses:**
+- Socio-economic challenges not fully captured by IVAC model
+- High teacher turnover or staffing issues
+- Infrastructure limitations
+- Geographic isolation (rural areas)
+
+**💡 Recommendation:** These schools need **targeted interventions**: additional funding, pedagogical coaching, peer mentoring from top performers, and potentially structural reforms.
+""")
+            else:
+                st.warning(f"""
+**📊 Établissements Nécessitant un Soutien :**
+- **Fourchette :** {bottom_values.min():.2f} à {bottom_values.max():.2f}
+- **Moyenne du bottom {top_n} :** {bottom_values.mean():.2f}
+- **Le plus en difficulté :** **{df_rank.iloc[-1]['nom_de_l_etablissement']}** avec {df_rank.iloc[-1][rank_metric]:.2f}
+
+**🧠 Hypothèses de Causes Profondes :**
+- Défis socio-économiques non entièrement capturés par le modèle IVAC
+- Fort turnover enseignant ou problèmes de staffing
+- Limitations d'infrastructure
+- Isolement géographique (zones rurales)
+
+**💡 Recommandation :** Ces établissements nécessitent des **interventions ciblées** : financements additionnels, coaching pédagogique, mentorat par des établissements performants, et potentiellement des réformes structurelles.
+""")
         else:
             no_data_msg = "No data available for this filter combination." if T is TEXTS["en"] else "Aucune donnée disponible pour cette combinaison de filtres."
             st.info(no_data_msg)
@@ -289,6 +424,39 @@ def show():
                 size_title = "Average added value by school size" if T is TEXTS["en"] else "Valeur ajoutée moyenne par taille d'établissement"
                 bar_chart(size_summary, x="size_category", y="valeur_ajoutee", 
                          title=size_title, ref_y=0, ref_label="Expected (0)" if T is TEXTS["en"] else "Attendu (0)")
+                
+                # 📊 ANALYSE PAR TAILLE (boîte colorée)
+                best_size = size_summary.loc[size_summary["valeur_ajoutee"].idxmax(), "size_category"]
+                best_va = size_summary["valeur_ajoutee"].max()
+                worst_size = size_summary.loc[size_summary["valeur_ajoutee"].idxmin(), "size_category"]
+                worst_va = size_summary["valeur_ajoutee"].min()
+                
+                if T is TEXTS["en"]:
+                    st.info(f"""
+**📊 Size Analysis:**
+- **Best performing size:** {best_size} schools with VA = {best_va:.2f}
+- **Lowest performing size:** {worst_size} schools with VA = {worst_va:.2f}
+- **Gap:** {best_va - worst_va:.2f} points between categories
+
+**🧠 Interpretation:**
+{"Medium-sized schools (50-150 students) tend to perform best — they balance individualized attention with sufficient resources and peer diversity." if "Medium" in str(best_size) or "Moyen" in str(best_size) else f"{best_size} schools show the highest value added, suggesting this size offers optimal conditions for student success."}
+
+**💡 Conclusion:**
+Size matters, but it's not deterministic. {"Small schools may struggle with limited resources, while very large schools face individualization challenges." if "Medium" in str(best_size) or "Moyen" in str(best_size) else "School management and pedagogy can compensate for size constraints."}
+""")
+                else:
+                    st.info(f"""
+**📊 Analyse par Taille :**
+- **Meilleure taille :** Établissements {best_size} avec VA = {best_va:.2f}
+- **Taille la moins performante :** Établissements {worst_size} avec VA = {worst_va:.2f}
+- **Écart :** {best_va - worst_va:.2f} points entre catégories
+
+**🧠 Interprétation :**
+{"Les établissements de taille moyenne (50-150 élèves) tendent à mieux performer — ils équilibrent attention individualisée et ressources/diversité suffisantes." if "Medium" in str(best_size) or "Moyen" in str(best_size) else f"Les établissements {best_size} affichent la plus forte valeur ajoutée, suggérant que cette taille offre des conditions optimales pour la réussite."}
+
+**💡 Conclusion :**
+La taille compte, mais n'est pas déterministe. {"Les petits établissements peuvent manquer de ressources, tandis que les très grands peinent à individualiser." if "Medium" in str(best_size) or "Moyen" in str(best_size) else "La gestion et la pédagogie peuvent compenser les contraintes de taille."}
+""")
             else:
                 no_data_msg = "Not enough data to categorize by size." if T is TEXTS["en"] else "Pas assez de données pour catégoriser par taille."
                 st.info(no_data_msg)
@@ -323,6 +491,38 @@ def show():
                 cross_title = "Added value: Sector × Size" if T is TEXTS["en"] else "Valeur ajoutée : Secteur × Taille"
                 bar_chart(cross_summary, x="size_category", y="valeur_ajoutee", color="secteur",
                          title=cross_title, ref_y=0)
+                
+                # 📊 ANALYSE SECTEUR × TAILLE (boîte colorée)
+                if "PU" in cross_summary["secteur"].values and "PR" in cross_summary["secteur"].values:
+                    pu_mean = cross_summary[cross_summary["secteur"] == "PU"]["valeur_ajoutee"].mean()
+                    pr_mean = cross_summary[cross_summary["secteur"] == "PR"]["valeur_ajoutee"].mean()
+                    
+                    if T is TEXTS["en"]:
+                        st.info(f"""
+**📊 Sector × Size Interaction:**
+- **Public (PU) average:** {pu_mean:.2f}
+- **Private (PR) average:** {pr_mean:.2f}
+- **Sector gap:** {pr_mean - pu_mean:+.2f} points
+
+**🧠 What this reveals:**
+{"Private schools outperform public schools across size categories. However, the gap may be larger in small schools (selection effects) and narrower in large schools (regression to the mean)." if pr_mean > pu_mean else "Public schools show competitive or superior performance compared to private schools in this academy, challenging national stereotypes."}
+
+**💡 Conclusion:**
+Sector effects interact with size. {"Private schools' advantage is not universal — it varies by school size and local context." if pr_mean > pu_mean else "Public schools demonstrate that with adequate resources and management, they can match or exceed private sector performance."}
+""")
+                    else:
+                        st.info(f"""
+**📊 Interaction Secteur × Taille :**
+- **Moyenne Public (PU) :** {pu_mean:.2f}
+- **Moyenne Privé (PR) :** {pr_mean:.2f}
+- **Écart sectoriel :** {pr_mean - pu_mean:+.2f} points
+
+**🧠 Ce que cela révèle :**
+{"Le privé sur-performe le public dans toutes les catégories de taille. Cependant, l'écart peut être plus important dans les petits établissements (effets de sélection) et plus étroit dans les grands (régression vers la moyenne)." if pr_mean > pu_mean else "Le public montre des performances compétitives ou supérieures au privé dans cette académie, challengeant les stéréotypes nationaux."}
+
+**💡 Conclusion :**
+Les effets sectoriels interagissent avec la taille. {"L'avantage du privé n'est pas universel — il varie selon la taille et le contexte local." if pr_mean > pu_mean else "Le public démontre qu'avec des ressources et une gestion adéquates, il peut égaler ou dépasser le privé."}
+""")
             else:
                 no_data_msg = "Not enough data for sector-size interaction." if T is TEXTS["en"] else "Pas assez de données pour le croisement secteur-taille."
                 st.info(no_data_msg)
@@ -350,8 +550,64 @@ def show():
             
             bar_chart(top_outliers, x="nom_de_l_etablissement", y="valeur_ajoutee", 
                      title=outliers_title_top, download_name="top_outliers.png")
+            
+            # 📊 ANALYSE TOP OUTLIERS (boîte verte)
+            if T is TEXTS["en"]:
+                st.success(f"""
+**📊 Exceptional Performers (Outliers):**
+- **Range:** {top_outliers["valeur_ajoutee"].min():.2f} to {top_outliers["valeur_ajoutee"].max():.2f}
+- **Top school:** **{top_outliers.iloc[0]["nom_de_l_etablissement"]}** with VA = {top_outliers.iloc[0]["valeur_ajoutee"]:.2f}
+
+**🧠 Why these schools stand out:**
+These outliers likely combine: (1) **innovative pedagogy**, (2) **strong leadership**, (3) **effective student support systems**, (4) **favorable community engagement**. They prove that exceptional results are possible even in challenging contexts.
+
+**💡 Action:** Conduct in-depth case studies on these schools. Document their practices (teaching methods, class organization, extracurricular programs) and create a **best practices playbook** for wider dissemination.
+""")
+            else:
+                st.success(f"""
+**📊 Établissements Exceptionnels (Outliers) :**
+- **Fourchette :** {top_outliers["valeur_ajoutee"].min():.2f} à {top_outliers["valeur_ajoutee"].max():.2f}
+- **Établissement #1 :** **{top_outliers.iloc[0]["nom_de_l_etablissement"]}** avec VA = {top_outliers.iloc[0]["valeur_ajoutee"]:.2f}
+
+**🧠 Pourquoi ces établissements se distinguent :**
+Ces outliers combinent probablement : (1) **pédagogie innovante**, (2) **leadership fort**, (3) **systèmes de soutien efficaces**, (4) **engagement communautaire favorable**. Ils prouvent que des résultats exceptionnels sont possibles même dans des contextes difficiles.
+
+**💡 Action :** Conduire des études de cas approfondies sur ces établissements. Documenter leurs pratiques (méthodes d'enseignement, organisation des classes, programmes parascolaires) et créer un **guide des bonnes pratiques** pour diffusion large.
+""")
+            
             bar_chart(bottom_outliers, x="nom_de_l_etablissement", y="valeur_ajoutee", 
                      title=outliers_title_bottom, download_name="bottom_outliers.png")
+            
+            # 📊 ANALYSE BOTTOM OUTLIERS (boîte rouge)
+            if T is TEXTS["en"]:
+                st.error(f"""
+**📊 Schools in Crisis (Negative Outliers):**
+- **Range:** {bottom_outliers["valeur_ajoutee"].min():.2f} to {bottom_outliers["valeur_ajoutee"].max():.2f}
+- **Most struggling:** **{bottom_outliers.iloc[0]["nom_de_l_etablissement"]}** with VA = {bottom_outliers.iloc[0]["valeur_ajoutee"]:.2f}
+
+**🧠 Likely Root Causes:**
+- **Systemic issues:** chronic underfunding, high staff turnover, deteriorating infrastructure
+- **Contextual challenges:** concentration of disadvantaged students beyond IVAC model predictions
+- **Management gaps:** lack of pedagogical leadership or strategic vision
+
+**💡 Urgent Action Required:**
+These schools need **immediate intervention**: emergency funding, external pedagogical support teams, principal coaching, and potentially restructuring. Delaying action will worsen student outcomes and staff morale.
+""")
+            else:
+                st.error(f"""
+**📊 Établissements en Crise (Outliers Négatifs) :**
+- **Fourchette :** {bottom_outliers["valeur_ajoutee"].min():.2f} à {bottom_outliers["valeur_ajoutee"].max():.2f}
+- **Plus en difficulté :** **{bottom_outliers.iloc[0]["nom_de_l_etablissement"]}** avec VA = {bottom_outliers.iloc[0]["valeur_ajoutee"]:.2f}
+
+**🧠 Causes Profondes Probables :**
+- **Problèmes systémiques :** sous-financement chronique, fort turnover du personnel, dégradation des infrastructures
+- **Défis contextuels :** concentration d'élèves défavorisés au-delà des prédictions du modèle IVAC
+- **Lacunes managériales :** manque de leadership pédagogique ou de vision stratégique
+
+**💡 Action Urgente Requise :**
+Ces établissements nécessitent une **intervention immédiate** : financement d'urgence, équipes de soutien pédagogique externes, coaching des directeurs, et potentiellement restructuration. Retarder l'action aggravera les résultats élèves et le moral du personnel.
+""")
+
         else:
             no_data_msg = f"Not enough schools for outlier analysis (minimum 10 required, found {len(df_outliers)})." if T is TEXTS["en"] else f"Pas assez d'établissements pour l'analyse des outliers (minimum 10 requis, trouvé {len(df_outliers)})."
             st.info(no_data_msg)
@@ -376,6 +632,40 @@ def show():
                 dept_title = f"Average added value by department – {acad_sel}" if T is TEXTS["en"] else f"Valeur ajoutée moyenne par département – {acad_sel}"
                 bar_chart(dept_summary, x="departement", y="mean", 
                          title=dept_title, ref_y=0, ref_label="Expected (0)" if T is TEXTS["en"] else "Attendu (0)")
+                
+                # 📊 ANALYSE PAR DÉPARTEMENT (boîte colorée)
+                best_dept = dept_summary.iloc[0]["departement"]
+                best_dept_va = dept_summary.iloc[0]["mean"]
+                worst_dept = dept_summary.iloc[-1]["departement"]
+                worst_dept_va = dept_summary.iloc[-1]["mean"]
+                dept_gap = best_dept_va - worst_dept_va
+                
+                if T is TEXTS["en"]:
+                    st.info(f"""
+**📊 Intra-Regional Disparities:**
+- **Best department:** {best_dept} with VA = {best_dept_va:.2f}
+- **Weakest department:** {worst_dept} with VA = {worst_dept_va:.2f}
+- **Intra-academy gap:** {dept_gap:.2f} points
+
+**🧠 What this reveals:**
+Even within the same academy ({acad_sel}), **departmental inequalities are significant**. This suggests that local factors (municipal funding, demographics, geographic isolation) create performance gaps that regional-level policies may miss.
+
+**💡 Recommendation:**
+Academy-level strategies must be **differentiated by department**. {best_dept} can serve as a regional model, while {worst_dept} needs targeted support (additional staff, infrastructure investment, peer exchanges).
+""")
+                else:
+                    st.info(f"""
+**📊 Disparités Intra-Régionales :**
+- **Meilleur département :** {best_dept} avec VA = {best_dept_va:.2f}
+- **Département le plus faible :** {worst_dept} avec VA = {worst_dept_va:.2f}
+- **Écart intra-académique :** {dept_gap:.2f} points
+
+**🧠 Ce que cela révèle :**
+Même au sein de la même académie ({acad_sel}), **les inégalités départementales sont significatives**. Cela suggère que des facteurs locaux (financement municipal, démographie, isolement géographique) créent des écarts que les politiques régionales peuvent manquer.
+
+**💡 Recommandation :**
+Les stratégies au niveau académique doivent être **différenciées par département**. {best_dept} peut servir de modèle régional, tandis que {worst_dept} nécessite un soutien ciblé (personnel additionnel, investissement infrastructure, échanges entre pairs).
+""")
             else:
                 no_data_msg = "Not enough departments with sufficient data (minimum 3 schools per department)." if T is TEXTS["en"] else "Pas assez de départements avec suffisamment de données (minimum 3 écoles par département)."
                 st.info(no_data_msg)
@@ -394,21 +684,72 @@ def show():
         scatter(df_acad_sess, x="nb_candidats_g", y="taux_reussite_g", 
                color="secteur" if "secteur" in df_acad_sess.columns else None, 
                title=scatter_title)
+        
+        # 📊 ANALYSE SCATTER (boîte bleue)
+        corr = df_acad_sess[["nb_candidats_g", "taux_reussite_g"]].corr().iloc[0, 1] if len(df_acad_sess) > 3 else 0
+        
+        if T is TEXTS["en"]:
+            st.info(f"""
+**📊 Candidates vs Pass Rate Relationship:**
+- **Correlation:** r = {corr:.3f} {"(weak)" if abs(corr) < 0.3 else "(moderate)" if abs(corr) < 0.6 else "(strong)"}
+- **Pattern:** {"No clear relationship — school size doesn't predict pass rates." if abs(corr) < 0.3 else f"{'Positive' if corr > 0 else 'Negative'} relationship detected."}
+
+**🧠 Interpretation:**
+{"This scatter plot shows **dispersion** — schools with similar sizes have very different outcomes. This confirms that **size is not destiny**. Management quality, teaching methods, and local context matter more than student numbers." if abs(corr) < 0.3 else "The correlation suggests size may play a role, but significant variability remains. Other factors (pedagogy, resources) explain most of the variance."}
+
+**💡 Takeaway:**
+Don't judge schools by size alone. {"Small schools can excel with individualized attention; large schools can succeed with strong organization." if abs(corr) < 0.3 else "Size effects exist but are mediated by school practices and leadership."}
+""")
+        else:
+            st.info(f"""
+**📊 Relation Candidats vs Taux de Réussite :**
+- **Corrélation :** r = {corr:.3f} {"(faible)" if abs(corr) < 0.3 else "(modérée)" if abs(corr) < 0.6 else "(forte)"}
+- **Pattern :** {"Pas de relation claire — la taille de l'établissement ne prédit pas les taux de réussite." if abs(corr) < 0.3 else f"Relation {'positive' if corr > 0 else 'négative'} détectée."}
+
+**🧠 Interprétation :**
+{"Ce nuage de points montre une **dispersion** — des établissements de tailles similaires ont des résultats très différents. Cela confirme que **la taille n'est pas un destin**. La qualité de la gestion, les méthodes d'enseignement et le contexte local comptent plus que le nombre d'élèves." if abs(corr) < 0.3 else "La corrélation suggère que la taille peut jouer un rôle, mais une variabilité significative demeure. D'autres facteurs (pédagogie, ressources) expliquent l'essentiel de la variance."}
+
+**💡 Retenir :**
+Ne pas juger un établissement uniquement sur sa taille. {"Les petits peuvent exceller avec attention individualisée ; les grands peuvent réussir avec une organisation solide." if abs(corr) < 0.3 else "Les effets de taille existent mais sont médiés par les pratiques et le leadership de l'établissement."}
+""")
 
     # 4) Distribution session courante
     st.subheader(T["distribution"])
     if "taux_reussite_g" in df_acad_sess.columns:
         dist_title = "Distribution of pass rate (G)" if T is TEXTS["en"] else "Distribution du taux de réussite (G)"
         histogram(df_acad_sess, x="taux_reussite_g", nbins=40, title=dist_title)
+        
+        # 📊 ANALYSE DISTRIBUTION (boîte bleue)
+        rate_mean = df_acad_sess["taux_reussite_g"].mean()
+        rate_median = df_acad_sess["taux_reussite_g"].median()
+        rate_std = df_acad_sess["taux_reussite_g"].std()
+        
+        if T is TEXTS["en"]:
+            st.info(f"""
+**📊 Pass Rate Distribution Analysis:**
+- **Mean:** {rate_mean:.1f}%
+- **Median:** {rate_median:.1f}%
+- **Standard deviation:** {rate_std:.1f}%
+- **Shape:** {"Right-skewed (most schools above average)" if rate_mean < rate_median else "Left-skewed (tail of struggling schools)" if rate_mean > rate_median else "Symmetric distribution"}
 
-    # 5) Table complète filtrée + export CSV
-    st.subheader(T["full_table"])
-    show_cols = [c for c in [
-        "session_str", "academie", "departement", "commune", "nom_de_l_etablissement", "secteur",
-        "taux_reussite_g", "valeur_ajoutee", "nb_candidats_g"
-    ] if c in df_acad_sess.columns]
-    table_df = df_acad_sess[show_cols].sort_values(by=[rank_metric] if rank_metric in df_acad_sess.columns else show_cols[0], ascending=False)
-    st.dataframe(table_df, use_container_width=True)
+**🧠 What this shows:**
+{"The distribution is concentrated around {rate_median:.0f}%, indicating **homogeneous performance** across schools in this academy. Most schools deliver similar results." if rate_std < 5 else f"Significant dispersion (σ = {rate_std:.1f}) reveals **heterogeneous performance**. Some schools excel (>95%), while others struggle (<70%)."}
 
-    csv = table_df.to_csv(index=False).encode("utf-8")
-    st.download_button(T["export_csv"], data=csv, file_name="etablissements_filtres.csv", mime="text/csv")
+**💡 Implication:**
+{"Consistency is good, but innovation may be lacking. Encourage experimentation to push the top end higher." if rate_std < 5 else "High variability signals inequality. Targeted support for low-performers and knowledge transfer from high-performers are needed."}
+""")
+        else:
+            st.info(f"""
+**📊 Analyse de la Distribution des Taux :**
+- **Moyenne :** {rate_mean:.1f}%
+- **Médiane :** {rate_median:.1f}%
+- **Écart-type :** {rate_std:.1f}%
+- **Forme :** {"Asymétrie à droite (plupart au-dessus de la moyenne)" if rate_mean < rate_median else "Asymétrie à gauche (queue d'établissements en difficulté)" if rate_mean > rate_median else "Distribution symétrique"}
+
+**🧠 Ce que cela montre :**
+{"La distribution est concentrée autour de {rate_median:.0f}%, indiquant une **performance homogène** entre établissements de cette académie. La plupart délivrent des résultats similaires." if rate_std < 5 else f"Une dispersion significative (σ = {rate_std:.1f}) révèle une **performance hétérogène**. Certains excellent (>95%), tandis que d'autres peinent (<70%)."}
+
+**💡 Implication :**
+{"La cohérence est bonne, mais l'innovation peut manquer. Encourager l'expérimentation pour pousser le haut de gamme plus haut." if rate_std < 5 else "Une forte variabilité signale l'inégalité. Soutien ciblé pour les faibles performeurs et transfert de connaissances depuis les hauts performeurs sont nécessaires."}
+""")
+

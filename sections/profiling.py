@@ -10,9 +10,6 @@ from utils.prep import (
     drop_exact_duplicates, drop_key_duplicates
 )
 
-# ------------------------------------------------------------
-# i18n (bilingue)
-# ------------------------------------------------------------
 TEXTS = {
     "en": {
         "language": "Language", "en": "English", "fr": "Français",
@@ -220,9 +217,6 @@ TEXTS = {
     },
 }
 
-# ------------------------------------------------------------
-# Helpers langue (indépendant de intro.py)
-# ------------------------------------------------------------
 def _get_lang():
     try:
         return st.query_params.get("lang", "en") if st.query_params.get("lang", "en") in ("en", "fr") else "en"
@@ -251,9 +245,7 @@ def _green_badge(text: str):
         unsafe_allow_html=True,
     )
 
-# ------------------------------------------------------------
-# Contrôles avancés + utilitaires qualité
-# ------------------------------------------------------------
+
 def advanced_validity_checks(df: pd.DataFrame) -> dict:
     """Contrôles métier supplémentaires (bornes, logique, formats)."""
     issues = {}
@@ -369,9 +361,7 @@ def quality_alerts(df: pd.DataFrame, T: dict) -> list[str]:
         alerts.append(T["alert_dups"].format(pct=dup_pct))
     return alerts
 
-# ------------------------------------------------------------
-# Imputations avancées
-# ------------------------------------------------------------
+
 try:
     from sklearn.impute import KNNImputer
     HAS_SK = True
@@ -425,9 +415,7 @@ def apply_imputation(df: pd.DataFrame, num_cols: list[str], strategy: str, group
     # Si stratégie non reconnue / indisponible (ex: knn sans sklearn)
     return d
 
-# ------------------------------------------------------------
-# Page
-# ------------------------------------------------------------
+
 def show():
     # ---- Language switch
     current = _get_lang()
@@ -448,7 +436,7 @@ def show():
     st.header(T["title"])
     st.markdown(T["intro"])
 
-    # 1) Load + clean baseline
+    #  Load + clean baseline
     df_raw = load_data()
     df_base = clean_ivac(df_raw)
     rows_raw, cols_raw = df_raw.shape
@@ -504,7 +492,7 @@ def show():
 
     st.divider()
 
-    # 2) Schema (types & non-null)
+    #  Schema (types & non-null)
     st.subheader(T["schema_only_title"])
     schema = info_table(df_base)[["Non-Null Count", "Null Count", "Dtype", "Null_Pct"]]
     st.dataframe(schema, use_container_width=True)
@@ -605,102 +593,17 @@ def show():
 
     st.divider()
 
-    # 7) Sandbox de nettoyage
-    st.subheader(T["sandbox_title"])
-    st.caption(T["sandbox_note"])
-
-    df_cleaned = df_view.copy()
-    with st.form("cleaning_form"):
-        num_cols = [c for c in ["taux_reussite_g","valeur_ajoutee","nb_candidats_g","nb_candidats_p","nb_candidats_total"] if c in df_cleaned.columns]
-        cat_cols = [c for c in ["academie","departement","secteur","commune"] if c in df_cleaned.columns]
-
-        # Stratégies
-        strategies_labels = [
-            T["imp_none"], "median", "mean", "mode",
-            "knn" + (" (requires scikit-learn)" if not HAS_SK else ""),
-            "ffill", "bfill"
-        ]
-        strat = st.selectbox(T["imp_num"], strategies_labels, index=0)
-
-        # Group-wise imputation
-        grouping_opts = [T["group_none"]]
-        for g in ["region_academique","academie","departement"]:
-            if g in df_cleaned.columns:
-                grouping_opts.append(g)
-        group_choice = st.selectbox(T["group_by"], grouping_opts, index=0)
-
-        cA, cB = st.columns(2)
-        do_cat = cA.checkbox(T["imp_cat"])
-        drop_exact = cB.checkbox(T["drop_exact"])
-        drop_key = st.checkbox(T["drop_key"])
-        submitted = st.form_submit_button(T["apply_btn"])
-
-    if submitted:
-        before_rows, before_na = len(df_cleaned), int(df_cleaned.isna().sum().sum())
-
-        # map display label → engine
-        disp = strat.lower()
-        if disp in (T["imp_none"].lower(),):
-            engine = None
-        elif "median" in disp or "médiane" in disp:
-            engine = "median"
-        elif "mean" in disp or "moyenne" in disp:
-            engine = "mean"
-        elif "mode" in disp:
-            engine = "mode"
-        elif "knn" in disp:
-            engine = "knn"
-        elif "ffill" in disp:
-            engine = "ffill"
-        elif "bfill" in disp:
-            engine = "bfill"
-        else:
-            engine = None
-
-        group_by = None if group_choice == T["group_none"] else group_choice
-
-        if engine and num_cols:
-            df_cleaned = apply_imputation(df_cleaned, num_cols, strategy=engine, group_by=group_by)
-        if do_cat and cat_cols:
-            df_cleaned = impute_categorical(df_cleaned, cat_cols)
-        if drop_exact:
-            df_cleaned = drop_exact_duplicates(df_cleaned)
-        if drop_key:
-            df_cleaned = drop_key_duplicates(df_cleaned)
-
-        after_rows, after_na = len(df_cleaned), int(df_cleaned.isna().sum().sum())
-        st.success(T["applied_ok"].format(
-            fixed=before_na - after_na, before=before_rows, after=after_rows,
-            after_minus_before=after_rows - before_rows
-        ))
-
-    st.dataframe(df_cleaned.head(100), use_container_width=True)
-    col_s1, col_s2 = st.columns(2)
-    if col_s1.button(T["save_btn"]):
-        st.session_state["ivac_cleaned_preview"] = df_cleaned.copy()
-        st.success(T["save_ok"])
-    if col_s2.button(T["reset_btn"]):
-        st.session_state.pop("ivac_cleaned_preview", None)
-        st.info(T["reset_ok"])
-    st.caption(T["sandbox_legend"])
-
-    st.divider()
-
     # 8) Outliers + box plot
     st.subheader(T["outliers_title"])
     st.caption(T["outliers_note"])
-    cols_to_flag = [c for c in ["valeur_ajoutee", "nb_candidats_total", "taux_reussite_g"] if c in df_cleaned.columns]
+    cols_to_flag = [c for c in ["valeur_ajoutee", "nb_candidats_total", "taux_reussite_g"] if c in df_view.columns]
     if cols_to_flag:
         cA, cB, cC = st.columns(3)
         slots = [cA, cB, cC]
         for i, col in enumerate(cols_to_flag):
-            mask = detect_outliers_mask(df_cleaned[col], method="iqr")
-            pct = (mask.sum() / len(df_cleaned) * 100) if len(df_cleaned) else 0
+            mask = detect_outliers_mask(df_view[col], method="iqr")
+            pct = (mask.sum() / len(df_view) * 100) if len(df_view) else 0
             slots[i].metric(f"{col}", f"{int(mask.sum())} ({pct:.1f}%)")
-    if {"valeur_ajoutee","secteur"}.issubset(df_cleaned.columns):
-        import plotly.express as px
-        fig = px.box(df_cleaned, y="valeur_ajoutee", color="secteur", points="outliers", title=T["box_title"])
-        st.plotly_chart(fig, use_container_width=True)
 
     st.divider()
 
@@ -733,11 +636,11 @@ def show():
 
     cols = st.columns(2)
     with cols[0]:
-        if "valeur_ajoutee" in df_cleaned.columns:
-            plot_hist(df_cleaned["valeur_ajoutee"], T["dist_va"])
+        if "valeur_ajoutee" in df_view.columns:
+            plot_hist(df_view["valeur_ajoutee"], T["dist_va"])
     with cols[1]:
-        if "nb_candidats_total" in df_cleaned.columns:
-            plot_hist(df_cleaned["nb_candidats_total"], T["dist_total"])
+        if "nb_candidats_total" in df_view.columns:
+            plot_hist(df_view["nb_candidats_total"], T["dist_total"])
 
     st.caption(T["dist_legend"])
 
@@ -765,7 +668,7 @@ def show():
 
     st.markdown("---")
 
-    # 10) Rapport qualité exportable
+    #  Rapport qualité exportable
     def generate_quality_report(df: pd.DataFrame) -> pd.DataFrame:
         miss_pct = (df.isna().sum().sum() / df.size * 100) if df.size else 0
         return pd.DataFrame({

@@ -1,181 +1,123 @@
-# sections/conclusions.py — BILINGUAL (FR/EN)
+# sections/conclusions.py — FULL BILINGUAL, DATA-DRIVEN
 import streamlit as st
 import pandas as pd
+import numpy as np
 from utils.io import load_data
 from utils.prep import make_tables
 
+# =========================
+# i18n dictionary (static parts)
+# =========================
 TEXTS = {
     "en": {
         "language": "Language", "en": "English", "fr": "Français",
         "header": "💡 Conclusions & Insights",
-        "intro": "This page synthesizes the key findings from the IVAC dashboard and provides actionable recommendations for educational policy.",
-        
-        "key_findings_title": "🔍 Key Findings",
+        "intro": "This page synthesizes key findings from the IVAC dashboard and provides actionable recommendations for policy and practice.",
+
+        "key_findings_title": "🔍 Key Findings (latest session)",
         "kf1_title": "1️⃣ Persistent Territorial Disparities",
-        "kf1_text": """
-The analysis reveals **significant regional inequalities** in school performance:
-- Academic regions show VA gaps **up to 10-15 points**
-- Best-performing regions systematically outperform expectations
-- Struggling regions remain below national average across multiple sessions
-
-**Implication:** Geographic location remains a strong predictor of educational outcomes, highlighting the need for **targeted territorial policies**.
-""",
-        
         "kf2_title": "2️⃣ Public vs Private Sector Gap",
-        "kf2_text": """
-Statistical tests consistently show a **significant difference** between public and private sectors:
-- Private schools show **higher value added** on average (+2 to +3 points)
-- However, this gap likely reflects **selection effects** (student backgrounds, parental involvement) rather than pedagogical superiority
-- Public schools serve more diverse populations and face greater contextual challenges
+        "kf3_title": "3️⃣ Pass Rate vs Value Added: correlation",
+        "kf4_title": "4️⃣ Stability over time (national VA)",
 
-**Implication:** Difference ≠ causality. The gap calls for **equitable resource distribution** and **sharing best practices** across sectors, not simplistic conclusions.
-""",
-        
-        "kf3_title": "3️⃣ Weak Correlation Between Pass Rates and Value Added",
-        "kf3_text": """
-The correlation between pass rates and value added is **moderate to weak** (r ≈ 0.3-0.5):
-- High pass rates don't always mean high value added
-- Some schools achieve strong results despite difficult contexts (high VA, moderate pass rate)
-- Others have high pass rates but low VA (potential **grade inflation** or favorable student composition)
-
-**Implication:** **Value added is a better indicator** of school effectiveness than raw pass rates. Policy should focus on VA improvement, not just pass rate targets.
-""",
-        
-        "kf4_title": "4️⃣ Stability Over Time with Pockets of Volatility",
-        "kf4_text": """
-Temporal trends show:
-- **National VA remains stable** around 0 (as expected by design)
-- Some regions show **consistent improvement** or decline
-- Individual schools can experience **high volatility** (staff changes, local policies, cohort effects)
-
-**Implication:** Multi-year tracking is essential. Single-session judgments can be misleading.
-""",
-        
         "recommendations_title": "🎯 Policy Recommendations",
-        "rec1": "**Territorial Support Programs:** Create peer-learning networks between high-performing and struggling regions. Focus on Q4 regions with sustained low VA.",
-        "rec2": "**Contextualized Evaluation:** Move beyond raw pass rates. Evaluate schools primarily on **value added** to account for student background.",
-        "rec3": "**Resource Reallocation:** Target additional funding and pedagogical support to schools with consistently negative VA, especially in public sector and rural areas.",
-        "rec4": "**Best Practice Sharing:** Document and disseminate methods from top-performing schools (both public and private) through a national knowledge base.",
-        "rec5": "**Longitudinal Monitoring:** Implement multi-year dashboards to distinguish structural issues from temporary fluctuations.",
-        "rec6": "**Transparency & Communication:** Make IVAC data accessible to parents and local communities while explaining limitations (context matters, VA ≠ quality in absolute terms).",
-        
+        "rec1": "**Territorial support:** Build peer-learning networks between top and Q4 regions; prioritize sustained low-VA areas.",
+        "rec2": "**Contextualized evaluation:** Move beyond raw pass rates; emphasize **value added** adjusted for student background.",
+        "rec3": "**Resource reallocation:** Channel funding and coaching to schools with persistently negative VA (esp. rural & high-need public).",
+        "rec4": "**Best-practice sharing:** Document methods from top schools (public & private) and scale them via a national knowledge hub.",
+        "rec5": "**Longitudinal monitoring:** Use multi-year panels to separate structural issues from one-off fluctuations.",
+        "rec6": "**Transparency & comms:** Publish IVAC results with clear caveats (context matters; VA ≠ absolute quality).",
+
         "limitations_title": "⚠️ Limitations & Caveats",
-        "lim1": "**IVAC reflects correlation, not causation.** High VA doesn't prove pedagogical excellence; it may reflect favorable contexts not captured in models.",
-        "lim2": "**Socio-economic variables are approximations.** Student background is complex and cannot be fully controlled for.",
-        "lim3": "**DNB is one snapshot.** It doesn't capture creativity, critical thinking, or long-term success.",
-        "lim4": "**Sample size matters.** Small schools have high variance. Interpret outliers cautiously.",
-        "lim5": "**Data quality varies.** Missing values, reporting errors, and changes in exam structure over time can affect comparisons.",
-        
+        "lim1": "**Correlation ≠ causation.** High VA does not prove pedagogy; unobserved advantages may remain.",
+        "lim2": "**Socio-economic proxies are imperfect.** Student background is complex.",
+        "lim3": "**DNB is a snapshot.** It ignores creativity, critical thinking, long-term outcomes.",
+        "lim4": "**Small-n volatility.** Small schools vary more; treat outliers with caution.",
+        "lim5": "**Data quality varies.** Missingness, reporting errors, exam changes can affect comparability.",
+
         "next_steps_title": "🚀 Next Steps",
-        "ns1": "**Deep-dive studies** on top-performing schools to identify transferable practices.",
-        "ns2": "**Qualitative research** to complement quantitative VA (teacher interviews, classroom observations).",
-        "ns3": "**Student trajectory tracking** beyond DNB (high school success, dropout rates).",
-        "ns4": "**Experimental interventions** in low-VA regions with rigorous evaluation.",
-        "ns5": "**International benchmarking** to compare French IVAC system with value-added models abroad.",
-        
+        "ns1": "**Deep-dives** on top performers to isolate transferable practices.",
+        "ns2": "**Qualitative work** (interviews, observations) to complement VA.",
+        "ns3": "**Student trajectories** beyond DNB (HS success, dropout).",
+        "ns4": "**Field experiments** in low-VA regions with rigorous evaluation.",
+        "ns5": "**International benchmarking** of value-added models.",
+
         "final_message": """
 ---
-### 🎓 Final Thought
+### 🎓 Final thought
 
-The IVAC dashboard demonstrates that **data can illuminate inequalities and guide action**. However, numbers alone don't change schools — **people do**. 
-
-This analysis should serve as a **starting point for conversation**, not a final judgment. Educational success is multidimensional, and every school faces unique challenges.
+Data can **reveal inequalities and guide action**, but numbers alone don’t transform schools — **people do**.
+Treat this dashboard as a **starting point for dialogue**, not a final verdict.
 
 **The goal is not to rank, but to support.**
+""",
 
-🔗 For more information: [Ministère de l'Éducation nationale](https://www.education.gouv.fr) | [data.gouv.fr](https://www.data.gouv.fr)
-"""
+        "quick_stats": "📊 Quick Stats",
+        "stat_avg_va": "Avg VA",
+        "stat_sigma": "Dispersion (σ)",
+        "stat_schools": "Schools",
+        "stat_pos_va": "Positive VA (%)",
     },
-    
     "fr": {
         "language": "Langue", "en": "English", "fr": "Français",
         "header": "💡 Conclusions & Enseignements",
-        "intro": "Cette page synthétise les principaux enseignements du tableau de bord IVAC et propose des recommandations concrètes pour les politiques éducatives.",
-        
-        "key_findings_title": "🔍 Enseignements Clés",
-        "kf1_title": "1️⃣ Disparités Territoriales Persistantes",
-        "kf1_text": """
-L'analyse révèle des **inégalités régionales significatives** dans les performances scolaires :
-- Les régions académiques affichent des écarts de VA **jusqu'à 10-15 points**
-- Les régions les plus performantes sur-performent systématiquement les attentes
-- Les régions en difficulté restent en-dessous de la moyenne nationale sur plusieurs sessions
+        "intro": "Cette page synthétise les principaux enseignements du tableau de bord IVAC et propose des recommandations actionnables pour les politiques éducatives.",
 
-**Implication :** La localisation géographique demeure un fort prédicteur des résultats éducatifs, soulignant le besoin de **politiques territoriales ciblées**.
-""",
-        
+        "key_findings_title": "🔍 Enseignements clés (dernier millésime)",
+        "kf1_title": "1️⃣ Disparités territoriales persistantes",
         "kf2_title": "2️⃣ Écart Public vs Privé",
-        "kf2_text": """
-Les tests statistiques montrent systématiquement une **différence significative** entre secteurs public et privé :
-- Les établissements privés affichent une **valeur ajoutée plus élevée** en moyenne (+2 à +3 points)
-- Cependant, cet écart reflète probablement des **effets de sélection** (profil des élèves, implication parentale) plutôt qu'une supériorité pédagogique
-- Le public accueille des populations plus diverses et fait face à des défis contextuels plus importants
+        "kf3_title": "3️⃣ Taux de réussite vs Valeur ajoutée : corrélation",
+        "kf4_title": "4️⃣ Stabilité temporelle (VA nationale)",
 
-**Implication :** Différence ≠ causalité. L'écart appelle à une **distribution équitable des ressources** et au **partage des bonnes pratiques** entre secteurs, pas à des conclusions simplistes.
-""",
-        
-        "kf3_title": "3️⃣ Faible Corrélation entre Taux de Réussite et Valeur Ajoutée",
-        "kf3_text": """
-La corrélation entre taux de réussite et valeur ajoutée est **modérée à faible** (r ≈ 0.3-0.5) :
-- Des taux de réussite élevés ne signifient pas toujours une forte valeur ajoutée
-- Certains établissements obtiennent de bons résultats malgré des contextes difficiles (VA élevée, taux modéré)
-- D'autres ont des taux élevés mais une faible VA (possible **inflation des notes** ou composition favorable des élèves)
+        "recommendations_title": "🎯 Recommandations",
+        "rec1": "**Soutien territorial :** Réseaux d'apprentissage entre régions leaders et Q4 ; prioriser les zones à VA durablement faible.",
+        "rec2": "**Évaluation contextualisée :** Aller au-delà des taux bruts ; mettre l’accent sur la **valeur ajoutée** ajustée du contexte.",
+        "rec3": "**Réallocation des ressources :** Financements & coaching vers les établissements à VA négative persistante (not. public & rural).",
+        "rec4": "**Partage des pratiques :** Capitaliser les méthodes des meilleurs (publics & privés) via une base nationale.",
+        "rec5": "**Suivi pluriannuel :** Panneaux multi-années pour distinguer structurel vs conjoncturel.",
+        "rec6": "**Transparence & pédagogie :** Publier IVAC avec mises en garde (le contexte compte ; VA ≠ qualité absolue).",
 
-**Implication :** **La valeur ajoutée est un meilleur indicateur** de l'efficacité scolaire que les taux bruts. Les politiques doivent se concentrer sur l'amélioration de la VA, pas seulement sur les objectifs de taux de réussite.
-""",
-        
-        "kf4_title": "4️⃣ Stabilité Temporelle avec Poches de Volatilité",
-        "kf4_text": """
-Les tendances temporelles montrent :
-- La **VA nationale reste stable** autour de 0 (comme prévu par construction)
-- Certaines régions montrent une **amélioration ou déclin constants**
-- Les établissements individuels peuvent connaître une **forte volatilité** (changements d'équipe, politiques locales, effets de cohorte)
+        "limitations_title": "⚠️ Limites & précautions",
+        "lim1": "**Corrélation ≠ causalité.** Une VA élevée ne prouve pas la pédagogie ; des avantages non observés peuvent subsister.",
+        "lim2": "**Variables socio-éco imparfaites.** Le profil des élèves est complexe.",
+        "lim3": "**Le DNB est un instantané.** Il ignore créativité, esprit critique, devenir à long terme.",
+        "lim4": "**Volatilité petit effectif.** Petits établissements = variance plus forte ; prudence sur les outliers.",
+        "lim5": "**Qualité de données variable.** Valeurs manquantes, erreurs, changements d’épreuve nuisent à la comparabilité.",
 
-**Implication :** Un suivi pluriannuel est essentiel. Les jugements sur une seule session peuvent être trompeurs.
-""",
-        
-        "recommendations_title": "🎯 Recommandations Politiques",
-        "rec1": "**Programmes de Soutien Territorial :** Créer des réseaux d'apprentissage entre pairs entre régions performantes et en difficulté. Focus sur les régions Q4 avec VA durablement faible.",
-        "rec2": "**Évaluation Contextualisée :** Aller au-delà des taux bruts. Évaluer les établissements principalement sur la **valeur ajoutée** pour tenir compte du profil des élèves.",
-        "rec3": "**Réallocation des Ressources :** Cibler financements et soutiens pédagogiques additionnels vers les établissements avec VA négative persistante, notamment dans le public et les zones rurales.",
-        "rec4": "**Partage des Bonnes Pratiques :** Documenter et diffuser les méthodes des établissements les plus performants (publics et privés) via une base de connaissances nationale.",
-        "rec5": "**Suivi Longitudinal :** Mettre en place des tableaux de bord pluriannuels pour distinguer problèmes structurels et fluctuations temporaires.",
-        "rec6": "**Transparence & Communication :** Rendre les données IVAC accessibles aux parents et communautés locales tout en expliquant les limites (le contexte compte, VA ≠ qualité absolue).",
-        
-        "limitations_title": "⚠️ Limites & Précautions",
-        "lim1": "**IVAC reflète une corrélation, pas une causalité.** Une VA élevée ne prouve pas l'excellence pédagogique ; elle peut refléter des contextes favorables non capturés par les modèles.",
-        "lim2": "**Les variables socio-économiques sont des approximations.** Le profil des élèves est complexe et ne peut être entièrement contrôlé.",
-        "lim3": "**Le DNB est un instantané.** Il ne capture pas la créativité, l'esprit critique ou la réussite à long terme.",
-        "lim4": "**La taille d'échantillon compte.** Les petits établissements ont une forte variance. Interpréter les outliers avec prudence.",
-        "lim5": "**La qualité des données varie.** Valeurs manquantes, erreurs de saisie et changements dans la structure de l'examen affectent les comparaisons.",
-        
-        "next_steps_title": "🚀 Prochaines Étapes",
-        "ns1": "**Études approfondies** sur les établissements les plus performants pour identifier les pratiques transférables.",
-        "ns2": "**Recherche qualitative** pour compléter la VA quantitative (entretiens enseignants, observations en classe).",
-        "ns3": "**Suivi des trajectoires élèves** au-delà du DNB (réussite au lycée, taux de décrochage).",
-        "ns4": "**Interventions expérimentales** dans les régions à faible VA avec évaluation rigoureuse.",
-        "ns5": "**Benchmarking international** pour comparer le système IVAC français avec les modèles de valeur ajoutée à l'étranger.",
-        
+        "next_steps_title": "🚀 Prochaines étapes",
+        "ns1": "**Études approfondies** des meilleurs pour isoler les pratiques transférables.",
+        "ns2": "**Volet qualitatif** (entretiens, observations) pour compléter la VA.",
+        "ns3": "**Trajectoires élèves** au-delà du DNB (réussite au lycée, décrochage).",
+        "ns4": "**Expérimentations** en régions à VA faible avec évaluation rigoureuse.",
+        "ns5": "**Benchmark international** des modèles de valeur ajoutée.",
+
         "final_message": """
 ---
-### 🎓 Réflexion Finale
+### 🎓 Réflexion finale
 
-Le tableau de bord IVAC démontre que **les données peuvent éclairer les inégalités et guider l'action**. Cependant, les chiffres seuls ne changent pas les écoles — **les personnes le font**.
+Les données peuvent **éclairer les inégalités et guider l’action**, mais ce ne sont pas les chiffres qui transforment les écoles — **ce sont les personnes**.
+Considérez ce tableau de bord comme un **point de départ du dialogue**, pas un jugement définitif.
 
-Cette analyse doit servir de **point de départ pour la conversation**, pas de jugement final. La réussite éducative est multidimensionnelle, et chaque établissement fait face à des défis uniques.
+**L’objectif n’est pas de classer, mais de soutenir.**
+""",
 
-**L'objectif n'est pas de classer, mais de soutenir.**
-
-🔗 Plus d'informations : [Ministère de l'Éducation nationale](https://www.education.gouv.fr) | [data.gouv.fr](https://www.data.gouv.fr)
-"""
-    }
+        "quick_stats": "📊 Statistiques rapides",
+        "stat_avg_va": "VA moyenne",
+        "stat_sigma": "Dispersion (σ)",
+        "stat_schools": "Établissements",
+        "stat_pos_va": "VA positive (%)",
+    },
 }
 
-def _get_lang() -> str:
+# =========================
+# Lang helpers
+# =========================
+def _get_lang(default="fr") -> str:
     try:
-        lang = st.query_params.get("lang", "fr")
-        return lang if lang in ("en", "fr") else "fr"
+        lang = st.query_params.get("lang", default)
+        return lang if lang in ("en", "fr") else default
     except Exception:
-        return "fr"
+        return default
 
 def _set_lang(lang: str):
     try:
@@ -183,8 +125,29 @@ def _set_lang(lang: str):
     except Exception:
         pass
 
+# =========================
+# Small utils
+# =========================
+def _fmt(x, fmt="{:.2f}", na="—"):
+    try:
+        if x is None or (isinstance(x, float) and np.isnan(x)):
+            return na
+        return fmt.format(x)
+    except Exception:
+        return na
+
+def _safe_corr(df, a, b):
+    try:
+        c = df[[a, b]].corr(numeric_only=True).iloc[0, 1]
+        return None if np.isnan(c) else float(c)
+    except Exception:
+        return None
+
+# =========================
+# Page
+# =========================
 def show():
-    # Language switcher
+    # --- Language switcher ---
     current = _get_lang()
     st.sidebar.subheader(TEXTS[current]["language"])
     choice = st.sidebar.radio(
@@ -200,92 +163,197 @@ def show():
         st.rerun()
     T = TEXTS[choice]
 
-    # Header
+    # --- Header & intro ---
     st.header(T["header"])
     st.info(T["intro"])
-    
-    st.markdown("---")
-    
-    # ==================== KEY FINDINGS ====================
+
+    # --- Load data (robust) ---
+    try:
+        df_raw = load_data()
+        tables = make_tables(df_raw)
+    except Exception as e:
+        st.error(f"Data loading error: {e}")
+        return
+
+    df_over = tables.get("overview", pd.DataFrame())
+    by_region = tables.get("by_region", pd.DataFrame())
+    ts = tables.get("timeseries", pd.DataFrame())
+
+    # Identify latest session if available
+    session_col = "session" if "session" in df_over.columns else None
+    latest_session = int(df_over[session_col].max()) if (session_col and not df_over.empty) else None
+    df_latest = df_over[df_over[session_col] == latest_session] if (latest_session is not None) else df_over
+
+    # --- Precompute metrics (safe) ---
+    mean_va = float(df_latest["valeur_ajoutee"].mean()) if "valeur_ajoutee" in df_latest.columns and not df_latest.empty else None
+    mean_rate = float(df_latest["taux_reussite_g"].mean()) if "taux_reussite_g" in df_latest.columns and not df_latest.empty else None
+    sigma_va = float(df_latest["valeur_ajoutee"].std()) if "valeur_ajoutee" in df_latest.columns and not df_latest.empty else None
+    n_schools = int(len(df_latest)) if not df_latest.empty else 0
+    pos_va_pct = float((df_latest["valeur_ajoutee"] > 0).mean() * 100) if "valeur_ajoutee" in df_latest.columns and len(df_latest) else None
+
+    # Regions (latest)
+    top_region = bottom_region = None
+    top_va = bottom_va = None
+    gap_va = None
+    if isinstance(by_region, pd.DataFrame) and not by_region.empty and {"region_academique", "valeur_ajoutee"}.issubset(by_region.columns):
+        if session_col and "session" in by_region.columns and latest_session is not None:
+            reg_latest = by_region[by_region["session"] == latest_session].copy()
+        else:
+            reg_latest = by_region.copy()
+        reg_latest = reg_latest.dropna(subset=["valeur_ajoutee"])
+        if not reg_latest.empty:
+            grp = reg_latest.groupby("region_academique", dropna=True)["valeur_ajoutee"].mean().sort_values(ascending=False)
+            if len(grp) > 0:
+                top_region, top_va = grp.index[0], float(grp.iloc[0])
+                bottom_region, bottom_va = grp.index[-1], float(grp.iloc[-1])
+                gap_va = top_va - bottom_va
+
+    # Sector gap (latest)
+    sector_delta = None
+    p_value = None
+    if "secteur" in df_latest.columns and "valeur_ajoutee" in df_latest.columns:
+        pu = df_latest.loc[df_latest["secteur"] == "PU", "valeur_ajoutee"].dropna()
+        pr = df_latest.loc[df_latest["secteur"] == "PR", "valeur_ajoutee"].dropna()
+        if len(pu) > 3 and len(pr) > 3:
+            sector_delta = float(pr.mean() - pu.mean())
+            try:
+                from scipy import stats
+                _, p_value = stats.ttest_ind(pr, pu, equal_var=False)
+                p_value = float(p_value)
+            except Exception:
+                p_value = None
+
+    # Correlation (latest)
+    corr_rate_va = _safe_corr(df_latest, "taux_reussite_g", "valeur_ajoutee")
+
+    # Time trend (national VA)
+    delta_va = None
+    if isinstance(ts, pd.DataFrame) and not ts.empty and {"valeur_ajoutee", "session"}.issubset(ts.columns):
+        ts_sorted = ts.dropna(subset=["session", "valeur_ajoutee"]).sort_values("session")
+        if len(ts_sorted) >= 2:
+            delta_va = float(ts_sorted["valeur_ajoutee"].iloc[-1] - ts_sorted["valeur_ajoutee"].iloc[0])
+
+    # =========================
+    # KEY FINDINGS (data-driven)
+    # =========================
     st.markdown(f"## {T['key_findings_title']}")
-    
-    st.markdown(f"### {T['kf1_title']}")
-    st.markdown(T["kf1_text"])
-    
-    st.markdown(f"### {T['kf2_title']}")
-    st.markdown(T["kf2_text"])
-    
-    st.markdown(f"### {T['kf3_title']}")
-    st.markdown(T["kf3_text"])
-    
-    st.markdown(f"### {T['kf4_title']}")
-    st.markdown(T["kf4_text"])
-    
+
+    # K1 — Territorial disparities
+    if choice == "fr":
+        st.markdown(f"### {T['kf1_title']}")
+        st.markdown(
+            f"- **Leader** : **{top_region or '—'}** ({_fmt(top_va, '{:+.2f}')}) &nbsp;•&nbsp; "
+            f"**À surveiller** : **{bottom_region or '—'}** ({_fmt(bottom_va, '{:+.2f}')})  \n"
+            f"- **Écart Top–Bottom (VA)** : **{_fmt(gap_va, '{:.2f}')} pts**  \n"
+            f"- **VA moyenne nationale** : **{_fmt(mean_va, '{:+.2f}')}**  "
+        )
+        st.caption("Lecture : un écart important entre régions confirme des disparités territoriales persistantes.")
+    else:
+        st.markdown(f"### {T['kf1_title']}")
+        st.markdown(
+            f"- **Leader**: **{top_region or '—'}** ({_fmt(top_va, '{:+.2f}')}) &nbsp;•&nbsp; "
+            f"**Watch**: **{bottom_region or '—'}** ({_fmt(bottom_va, '{:+.2f}')})  \n"
+            f"- **Top–Bottom gap (VA)**: **{_fmt(gap_va, '{:.2f}')} pts**  \n"
+            f"- **National average VA**: **{_fmt(mean_va, '{:+.2f}')}**  "
+        )
+        st.caption("Interpretation: a large spread across regions signals persistent territorial disparities.")
+
+    # K2 — Sector gap
+    if choice == "fr":
+        st.markdown(f"### {T['kf2_title']}")
+        st.markdown(
+            f"- **Δ(PR − PU)** : **{_fmt(sector_delta, '{:+.2f}')} pts VA**  \n"
+            f"- **Significativité (p-value)** : **{_fmt(p_value, '{:.4f}')}** "
+            + ("→ **différence significative**" if (p_value is not None and p_value < 0.05) else "→ différence non significative")
+        )
+        st.caption("Rappel : écart statistique ≠ causalité (sélection, contexte).")
+    else:
+        st.markdown(f"### {T['kf2_title']}")
+        st.markdown(
+            f"- **Δ(PR − PU)**: **{_fmt(sector_delta, '{:+.2f}')} VA pts**  \n"
+            f"- **Significance (p-value)**: **{_fmt(p_value, '{:.4f}')}** "
+            + ("→ **significant difference**" if (p_value is not None and p_value < 0.05) else "→ not significant")
+        )
+        st.caption("Reminder: statistical gap ≠ causality (selection, context).")
+
+    # K3 — Correlation pass rate vs VA
+    if choice == "fr":
+        st.markdown(f"### {T['kf3_title']}")
+        if corr_rate_va is None:
+            st.markdown("Corrélation non calculable sur le dernier millésime.")
+        else:
+            st.markdown(f"- **Corrélation de Pearson (taux vs VA)** : **{corr_rate_va:.2f}**")
+            st.caption(
+                "Si |r| > 0,5 → relation forte ; ~0,3 → modérée ; < 0,2 → faible. "
+                "Association ≠ causalité."
+            )
+    else:
+        st.markdown(f"### {T['kf3_title']}")
+        if corr_rate_va is None:
+            st.markdown("Correlation not computable on latest vintage.")
+        else:
+            st.markdown(f"- **Pearson correlation (rate vs VA)**: **{corr_rate_va:.2f}**")
+            st.caption(
+                "If |r| > 0.5 → strong; ~0.3 → moderate; < 0.2 → weak. "
+                "Association ≠ causation."
+            )
+
+    # K4 — Stability over time
+    if choice == "fr":
+        st.markdown(f"### {T['kf4_title']}")
+        st.markdown(
+            f"- **Δ VA nationale (début → fin)** : **{_fmt(delta_va, '{:+.2f}')} pts**  \n"
+            f"- **VA moyenne (dernier millésime)** : **{_fmt(mean_va, '{:+.2f}')}**"
+        )
+        st.caption("Par construction, la VA nationale oscille autour de 0 ; suivre l’évolution multi-annuelle reste essentiel.")
+    else:
+        st.markdown(f"### {T['kf4_title']}")
+        st.markdown(
+            f"- **Δ National VA (first → last)**: **{_fmt(delta_va, '{:+.2f}')} pts**  \n"
+            f"- **Avg VA (latest)**: **{_fmt(mean_va, '{:+.2f}')}**"
+        )
+        st.caption("By design, national VA hovers around 0; multi-year tracking is still essential.")
+
+    # =========================
+    # Recommendations, limitations, next steps (static text)
+    # =========================
     st.markdown("---")
-    
-    # ==================== RECOMMENDATIONS ====================
     st.markdown(f"## {T['recommendations_title']}")
-    
     st.markdown(f"1. {T['rec1']}")
     st.markdown(f"2. {T['rec2']}")
     st.markdown(f"3. {T['rec3']}")
     st.markdown(f"4. {T['rec4']}")
     st.markdown(f"5. {T['rec5']}")
     st.markdown(f"6. {T['rec6']}")
-    
-    st.markdown("---")
-    
-    # ==================== LIMITATIONS ====================
-    st.markdown(f"## {T['limitations_title']}")
-    
-    st.warning(f"""
-**⚠️ Rappel important / Important reminder:**
 
-- {T['lim1']}
-- {T['lim2']}
-- {T['lim3']}
-- {T['lim4']}
-- {T['lim5']}
-""")
-    
     st.markdown("---")
-    
-    # ==================== NEXT STEPS ====================
+    st.markdown(f"## {T['limitations_title']}")
+    st.warning(
+        "- " + T["lim1"] + "\n\n"
+        "- " + T["lim2"] + "\n\n"
+        "- " + T["lim3"] + "\n\n"
+        "- " + T["lim4"] + "\n\n"
+        "- " + T["lim5"]
+    )
+
+    st.markdown("---")
     st.markdown(f"## {T['next_steps_title']}")
-    
     st.markdown(f"- {T['ns1']}")
     st.markdown(f"- {T['ns2']}")
     st.markdown(f"- {T['ns3']}")
     st.markdown(f"- {T['ns4']}")
     st.markdown(f"- {T['ns5']}")
-    
-    # ==================== FINAL MESSAGE ====================
+
     st.markdown(T["final_message"])
-    
-    # ==================== QUICK STATS (BONUS) ====================
-    try:
-        df_raw = load_data()
-        tables = make_tables(df_raw)
-        df_over = tables.get("overview", pd.DataFrame())
-        
-        if not df_over.empty and "valeur_ajoutee" in df_over.columns:
-            st.markdown("---")
-            if T is TEXTS["fr"]:
-                st.markdown("### 📊 Statistiques Rapides")
-            else:
-                st.markdown("### 📊 Quick Stats")
-            
-            col1, col2, col3, col4 = st.columns(4)
-            
-            mean_va = df_over["valeur_ajoutee"].mean()
-            std_va = df_over["valeur_ajoutee"].std()
-            n_schools = len(df_over)
-            n_positive_va = (df_over["valeur_ajoutee"] > 0).sum()
-            
-            col1.metric("VA moyenne" if T is TEXTS["fr"] else "Avg VA", f"{mean_va:+.2f}")
-            col2.metric("Dispersion (σ)", f"{std_va:.2f}")
-            col3.metric("Établissements" if T is TEXTS["fr"] else "Schools", f"{n_schools:,}")
-            col4.metric("VA positive (%)" if T is TEXTS["fr"] else "Positive VA (%)", 
-                       f"{100*n_positive_va/n_schools:.1f}%")
-    except Exception:
-        pass  # Si erreur de chargement, on ne montre pas les stats
+
+    # =========================
+    # Quick stats (optional footer)
+    # =========================
+    if not df_latest.empty and "valeur_ajoutee" in df_latest.columns:
+        st.markdown("---")
+        st.markdown(f"### {T['quick_stats']}")
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric(T["stat_avg_va"], _fmt(mean_va, "{:+.2f}"))
+        col2.metric(T["stat_sigma"], _fmt(sigma_va, "{:.2f}"))
+        col3.metric(T["stat_schools"], f"{n_schools:,}")
+        col4.metric(T["stat_pos_va"], _fmt(pos_va_pct, "{:.1f}%"))

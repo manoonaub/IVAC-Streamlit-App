@@ -184,16 +184,40 @@ def show():
     st.markdown(f"{T.get('hook1','')}\n\n{T.get('hook2','')}")
     if T.get("def_va"):
         st.info(T["def_va"])
+    
+    # Storyboard simple
+    st.markdown("### 🗺️ Navigation Guide")
+    col1, col2, col3, col4, col5 = st.columns(5)
+    with col1:
+        st.markdown("**1️⃣ Intro**<br>Context & Data", unsafe_allow_html=True)
+    with col2:
+        st.markdown("**2️⃣ Data Quality**<br>Validation & Cleaning", unsafe_allow_html=True)
+    with col3:
+        st.markdown("**3️⃣ Overview**<br>KPIs & Trends", unsafe_allow_html=True)
+    with col4:
+        st.markdown("**4️⃣ Deep Dives**<br>School Analysis", unsafe_allow_html=True)
+    with col5:
+        st.markdown("**5️⃣ Conclusions**<br>Insights & Actions", unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # Call-to-action
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("🚀 Explore the Data Now →", use_container_width=True, type="primary"):
+            st.query_params["page"] = "Overview & Analysis"
+            st.rerun()
 
-    # ---------------- CONTEXT & QUESTION ----------------
-    if T.get("context_title"):
-        st.subheader(T["context_title"])
-    rq = T.get("rq", "")
-    goals = T.get("goals", "")
-    if rq or goals:
-        st.markdown(f"> **{rq}**\n\n{goals}")
-    if T.get("source"):
-        st.caption(T["source"])
+    # ---------------- CONTEXT & QUESTION (Progressive Disclosure) ----------------
+    with st.expander("📖 Learn More About the Project Context", expanded=False):
+        if T.get("context_title"):
+            st.subheader(T["context_title"])
+        rq = T.get("rq", "")
+        goals = T.get("goals", "")
+        if rq or goals:
+            st.markdown(f"> **{rq}**\n\n{goals}")
+        if T.get("source"):
+            st.caption(T["source"])
 
     # ---------------- CLEANING SUMMARY ----------------
     if T.get("prep_title"):
@@ -253,9 +277,15 @@ def show():
         "*Added (engineered)*: columns created during cleaning (e.g., `valeur_ajoutee`, `row_id`) · "
         "*Dropped*: columns removed (duplicates, replaced, or irrelevant)."
     )
-    assert df_clean.shape[0] == df_raw.shape[0]  # on ne perd pas de lignes au cleaning
-    for col in ["valeur_ajoutee", "nb_candidats_total", "row_id"]:
-      assert col in df_clean.columns
+    
+    # Validation checks (warnings instead of assertions for robustness)
+    if df_clean.shape[0] != df_raw.shape[0]:
+        st.warning(f"⚠️ Row count changed during cleaning: {df_raw.shape[0]} → {df_clean.shape[0]}")
+    
+    missing_cols = [col for col in ["valeur_ajoutee", "nb_candidats_total", "row_id"] if col not in df_clean.columns]
+    if missing_cols:
+        st.warning(f"⚠️ Expected columns missing after cleaning: {', '.join(missing_cols)}")
+    
     # ---- Details
     if diff.get("engineered"):
         st.caption(f"{T.get('eng_cols_caption','Engineered columns added:')} {', '.join(diff['engineered'])}")

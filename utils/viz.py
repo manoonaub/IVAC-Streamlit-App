@@ -7,13 +7,27 @@ import plotly.io as pio
 PRIMARY_BLUE = "#2563eb"
 NEGATIVE_RED = "#e11d48"
 
+# Palette de couleurs vibrantes
+VIBRANT_COLORS = [
+    "#3b82f6",  # Bleu vif
+    "#10b981",  # Vert émeraude
+    "#f59e0b",  # Orange
+    "#ef4444",  # Rouge
+    "#8b5cf6",  # Violet
+    "#ec4899",  # Rose
+    "#06b6d4",  # Cyan
+    "#84cc16",  # Lime
+]
+
 
 def _apply_common_layout(fig, xaxis_title=None, yaxis_title=None):
-    # Keep defaults to respect Streamlit theme; just add comfortable margins and font size
+    """Apply common layout settings to charts for consistency and accessibility."""
     layout_params = {
         "margin": dict(l=10, r=10, t=50, b=10), 
         "font": dict(size=13), 
-        "showlegend": True
+        "showlegend": True,
+        "plot_bgcolor": "rgba(0,0,0,0)",  # Transparent background
+        "paper_bgcolor": "rgba(0,0,0,0)"  # Transparent background
     }
     
     # Add axis titles if provided (for accessibility)
@@ -29,8 +43,8 @@ def line_chart(df: pd.DataFrame, x: str, y: str, color: str | None = None, title
     if df is None or df.empty or x not in df.columns or y not in df.columns:
         st.info("Aucune donnée à afficher pour le graphique de tendance.")
         return
-    fig = px.line(df, x=x, y=y, color=color, markers=True, title=title, color_discrete_sequence=px.colors.sequential.Blues)
-    fig.update_traces(line=dict(width=3), marker=dict(size=7))
+    fig = px.line(df, x=x, y=y, color=color, markers=True, title=title, color_discrete_sequence=VIBRANT_COLORS)
+    fig.update_traces(line=dict(width=4), marker=dict(size=10))
     _apply_common_layout(fig, xaxis_title=xaxis_title or x.replace('_', ' ').title(), yaxis_title=yaxis_title or y.replace('_', ' ').title())
     
     # Reference line
@@ -83,8 +97,8 @@ def bar_chart(df: pd.DataFrame, x: str, y: str, color: str | None = None, title:
         plot_df[sign_col] = plot_df[y].apply(lambda v: "≥ 0" if pd.notna(v) and v >= 0 else "< 0")
         color_arg = sign_col
         color_map = {"≥ 0": PRIMARY_BLUE, "< 0": NEGATIVE_RED}
-    fig = px.bar(plot_df, x=x, y=y, color=color_arg, title=title, color_discrete_sequence=px.colors.sequential.Blues, color_discrete_map=color_map)
-    fig.update_traces(marker_line_color="#111827", marker_line_width=0.2)
+    fig = px.bar(plot_df, x=x, y=y, color=color_arg, title=title, color_discrete_sequence=VIBRANT_COLORS, color_discrete_map=color_map)
+    fig.update_traces(marker_line_color="#1f2937", marker_line_width=1.5)
     _apply_common_layout(fig, xaxis_title=xaxis_title or x.replace('_', ' ').title(), yaxis_title=yaxis_title or y.replace('_', ' ').title())
     
     # Reference line
@@ -129,7 +143,8 @@ def histogram(df: pd.DataFrame, x: str, nbins: int = 40, title: str | None = Non
     if df is None or df.empty or x not in df.columns:
         st.info("Aucune donnée à afficher pour la distribution.")
         return
-    fig = px.histogram(df, x=x, nbins=nbins, title=title, color_discrete_sequence=px.colors.sequential.Blues)
+    fig = px.histogram(df, x=x, nbins=nbins, title=title, color_discrete_sequence=["#3b82f6"])
+    fig.update_traces(marker_line_color="#1f2937", marker_line_width=1.5)
     _apply_common_layout(fig, xaxis_title=xaxis_title or x.replace('_', ' ').title(), yaxis_title=yaxis_title or "Frequency / Fréquence")
     
     # Reference line
@@ -174,7 +189,7 @@ def boxplot(df: pd.DataFrame, x: str | None, y: str, color: str | None = None, t
     if df is None or df.empty or y not in df.columns:
         st.info("Aucune donnée pour le boxplot.")
         return
-    fig = px.box(df, x=x, y=y, color=color, points="outliers", title=title, color_discrete_sequence=px.colors.sequential.Blues)
+    fig = px.box(df, x=x, y=y, color=color, points="outliers", title=title, color_discrete_sequence=VIBRANT_COLORS)
     _apply_common_layout(fig, 
                         xaxis_title=xaxis_title or (x.replace('_', ' ').title() if x else ""),
                         yaxis_title=yaxis_title or y.replace('_', ' ').title())
@@ -191,7 +206,8 @@ def scatter(df: pd.DataFrame, x: str, y: str, color: str | None = None, size: st
     if df is None or df.empty or x not in df.columns or y not in df.columns:
         st.info("Aucune donnée pour le nuage de points.")
         return
-    fig = px.scatter(df, x=x, y=y, color=color, size=size, trendline=trendline, title=title, color_discrete_sequence=px.colors.sequential.Blues)
+    fig = px.scatter(df, x=x, y=y, color=color, size=size, trendline=trendline, title=title, color_discrete_sequence=VIBRANT_COLORS, opacity=0.7)
+    fig.update_traces(marker=dict(size=12, line=dict(width=2, color='#1f2937')))
     _apply_common_layout(fig, 
                         xaxis_title=xaxis_title or x.replace('_', ' ').title(),
                         yaxis_title=yaxis_title or y.replace('_', ' ').title())
