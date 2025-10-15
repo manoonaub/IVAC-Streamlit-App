@@ -233,8 +233,11 @@ st.metric(T["kpi_va"], f"{mean_va:+.2f}")
 
 ⚠️ **Critical reminder:** Use IVAC as a **conversation starter**, not a final judgment.
 
----
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 966fdf9d49653e6eb81748e0546cb22d2954b147
 ## 🚀 Deployment
 
 ### Streamlit Community Cloud (Recommended)
