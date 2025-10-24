@@ -6,7 +6,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org)
 [![License](https://img.shields.io/badge/License-Etalab%202.0-green)](https://www.etalab.gouv.fr/licence-ouverte-open-licence)
 
-🖥️ **Live App:** [👉 IVAC Streamlit Dashboard](https://manoonaub-ivac-streamlit-app-app-x6gn6z.streamlit.app)
+🖥️ **Live App:** [👉 IVAC Streamlit Dashboard] https://manoonaub-ivac-streamlit-app-app-x6gn6z.streamlit.app/?page=Introduction
 
 ---
 
@@ -55,35 +55,8 @@ App will open at:
 
 ### 3️⃣ **Try it online**
 
-🔗 https://manoonaub-ivac-streamlit-app-app-x6gn6z.streamlit.app
+🔗 https://manoonaub-ivac-streamlit-app-app-x6gn6z.streamlit.app/?page=Introduction
 
----
-
-## 📂 **Project Structure**
-
-```
-IVAC-Streamlit-App/
-│
-├── app.py                        
-├── README.md                     
-│
-├── data/
-│   └── fr-en-indicateurs-valeur-ajoutee-colleges.csv
-│
-├── assets/
-│   └── fr_departements.geojson   
-│
-├── sections/
-│   ├── intro.py                  #
-│   ├── profiling.py              
-│   ├── overview.py               
-│   └── conclusions.py            
-│
-└── utils/
-    ├── io.py, prep.py, viz.py, geo.py  # Helper scripts
-```
-
----
 
 ## 🎨 **Key Features**
 
@@ -172,7 +145,7 @@ st.metric(T["kpi_va"], f"{mean_va:+.2f}")
 
 This project was developed as part of the  
 🎓 **EFREI Paris – M1 Data & Artificial Intelligence**  
-**Module:** Data Visualization & Storytelling
+**Module:** Data Visualization 
 
 📅 **Year:** 2025  
 👩‍💻 **Student:** Manon Aubel  
@@ -200,7 +173,7 @@ This project was developed as part of the
 
 **Author:** Manon Aubel  
 **Institution:** EFREI Paris  
-**App:** https://manoonaub-ivac-streamlit-app-app-x6gn6z.streamlit.app
+**App:** https://manoonaub-ivac-streamlit-app-app-x6gn6z.streamlit.app/?page=Introduction
 
 ---
 
