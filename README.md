@@ -16,8 +16,6 @@ This Streamlit application provides an **interactive and bilingual analysis** of
 
 It measures how much each school contributes to student success **beyond what is expected** given its socio-economic context.
 
----
-
 ## 🎯 **Objectives**
 
 Transform open public data into an **educational and interactive dashboard** that helps to:
@@ -27,7 +25,6 @@ Transform open public data into an **educational and interactive dashboard** tha
 - Highlight **best practices** among top-performing schools  
 - Support **data-driven educational policy decisions**
 
----
 
 ## 🧭 **Narrative Flow**
 
