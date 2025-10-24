@@ -21,7 +21,14 @@ VIBRANT_COLORS = [
 
 
 def _apply_common_layout(fig, xaxis_title=None, yaxis_title=None):
-    """Apply common layout settings to charts for consistency and accessibility."""
+    """
+    Apply common layout settings to charts for consistency and accessibility.
+    
+    Args:
+        fig: Plotly figure object
+        xaxis_title: Title for x-axis (optional)
+        yaxis_title: Title for y-axis (optional)
+    """
     layout_params = {
         "margin": dict(l=10, r=10, t=50, b=10), 
         "font": dict(size=13), 
@@ -40,48 +47,65 @@ def _apply_common_layout(fig, xaxis_title=None, yaxis_title=None):
 
 
 def line_chart(df: pd.DataFrame, x: str, y: str, color: str | None = None, title: str | None = None, ref_y: float | None = None, ref_label: str | None = None, download_name: str | None = None, threshold_zones: list[dict] | None = None, annotations: list[dict] | None = None, xaxis_title: str | None = None, yaxis_title: str | None = None):
-    if df is None or df.empty or x not in df.columns or y not in df.columns:
+    """Create an interactive line chart with enhanced validation and error handling."""
+    # Enhanced validation
+    if df is None or df.empty:
         st.info("Aucune donnée à afficher pour le graphique de tendance.")
         return
-    fig = px.line(df, x=x, y=y, color=color, markers=True, title=title, color_discrete_sequence=VIBRANT_COLORS)
-    fig.update_traces(line=dict(width=4), marker=dict(size=10))
-    _apply_common_layout(fig, xaxis_title=xaxis_title or x.replace('_', ' ').title(), yaxis_title=yaxis_title or y.replace('_', ' ').title())
     
-    # Reference line
-    if ref_y is not None:
-        fig.add_hline(y=ref_y, line_dash="dash", line_color="red", annotation_text=ref_label or str(ref_y), annotation_position="top left")
+    if x not in df.columns or y not in df.columns:
+        st.error(f"Colonnes manquantes: {x} ou {y} non trouvées dans les données.")
+        return
     
-    if threshold_zones:
-        for zone in threshold_zones:
-            fig.add_hrect(
-                y0=zone.get("y0", 0), y1=zone.get("y1", 0),
-                fillcolor=zone.get("color", "lightgray"),
-                opacity=zone.get("opacity", 0.2),
-                line_width=0,
-                annotation_text=zone.get("label", ""),
-                annotation_position=zone.get("label_position", "top left")
-            )
+    # Check for sufficient data points
+    if len(df) < 2:
+        st.warning("Données insuffisantes pour créer un graphique de tendance (minimum 2 points requis).")
+        return
     
-    # Custom annotations
-    if annotations:
-        for ann in annotations:
-            fig.add_annotation(
-                x=ann.get("x"), y=ann.get("y"),
-                text=ann.get("text", ""),
-                showarrow=ann.get("showarrow", True),
-                arrowhead=ann.get("arrowhead", 2),
-                arrowcolor=ann.get("arrowcolor", "red"),
-                bgcolor=ann.get("bgcolor", "white"),
-                bordercolor=ann.get("bordercolor", "red")
-            )
-    
-    st.plotly_chart(fig, use_container_width=True)
-    if download_name:
-        try:
-            png_bytes = pio.to_image(fig, format="png", scale=2)
-            st.download_button("Télécharger PNG", data=png_bytes, file_name=download_name, mime="image/png")
-        except Exception:
-            st.caption("Astuce: installe kaleido pour activer l'export PNG.")
+    try:
+        fig = px.line(df, x=x, y=y, color=color, markers=True, title=title, color_discrete_sequence=VIBRANT_COLORS)
+        fig.update_traces(line=dict(width=4), marker=dict(size=10))
+        _apply_common_layout(fig, xaxis_title=xaxis_title or x.replace('_', ' ').title(), yaxis_title=yaxis_title or y.replace('_', ' ').title())
+        
+        # Reference line
+        if ref_y is not None:
+            fig.add_hline(y=ref_y, line_dash="dash", line_color="red", annotation_text=ref_label or str(ref_y), annotation_position="top left")
+        
+        if threshold_zones:
+            for zone in threshold_zones:
+                fig.add_hrect(
+                    y0=zone.get("y0", 0), y1=zone.get("y1", 0),
+                    fillcolor=zone.get("color", "lightgray"),
+                    opacity=zone.get("opacity", 0.2),
+                    line_width=0,
+                    annotation_text=zone.get("label", ""),
+                    annotation_position=zone.get("label_position", "top left")
+                )
+        
+        # Custom annotations
+        if annotations:
+            for ann in annotations:
+                fig.add_annotation(
+                    x=ann.get("x"), y=ann.get("y"),
+                    text=ann.get("text", ""),
+                    showarrow=ann.get("showarrow", True),
+                    arrowhead=ann.get("arrowhead", 2),
+                    arrowcolor=ann.get("arrowcolor", "red"),
+                    bgcolor=ann.get("bgcolor", "white"),
+                    bordercolor=ann.get("bordercolor", "red")
+                )
+        
+        st.plotly_chart(fig, use_container_width=True)
+        if download_name:
+            try:
+                png_bytes = pio.to_image(fig, format="png", scale=2)
+                st.download_button("Télécharger PNG", data=png_bytes, file_name=download_name, mime="image/png")
+            except Exception as e:
+                st.caption(f"Export PNG non disponible: {str(e)}")
+                
+    except Exception as e:
+        st.error(f"Erreur lors de la création du graphique: {str(e)}")
+        st.caption("Vérifiez que les colonnes existent et contiennent des données valides.")
 
 
 def bar_chart(df: pd.DataFrame, x: str, y: str, color: str | None = None, title: str | None = None, ref_y: float | None = None, ref_label: str | None = None, download_name: str | None = None, sign_color: bool = False, threshold_zones: list[dict] | None = None, annotations: list[dict] | None = None, xaxis_title: str | None = None, yaxis_title: str | None = None):
@@ -93,9 +117,9 @@ def bar_chart(df: pd.DataFrame, x: str, y: str, color: str | None = None, title:
     color_map = None
     if sign_color:
         sign_col = f"__sign_{y}__"
-        plot_df[sign_col] = plot_df[y].apply(lambda v: "≥ 0" if pd.notna(v) and v >= 0 else "< 0")
+        plot_df[sign_col] = plot_df[y].apply(lambda v: ">= 0" if pd.notna(v) and v >= 0 else "< 0")
         color_arg = sign_col
-        color_map = {"≥ 0": PRIMARY_BLUE, "< 0": NEGATIVE_RED}
+        color_map = {">= 0": PRIMARY_BLUE, "< 0": NEGATIVE_RED}
     fig = px.bar(plot_df, x=x, y=y, color=color_arg, title=title, color_discrete_sequence=VIBRANT_COLORS, color_discrete_map=color_map)
     fig.update_traces(marker_line_color="#1f2937", marker_line_width=1.5)
     _apply_common_layout(fig, xaxis_title=xaxis_title or x.replace('_', ' ').title(), yaxis_title=yaxis_title or y.replace('_', ' ').title())
@@ -201,11 +225,23 @@ def boxplot(df: pd.DataFrame, x: str | None, y: str, color: str | None = None, t
             st.caption("Astuce: installe kaleido pour activer l'export PNG.")
 
 
-def scatter(df: pd.DataFrame, x: str, y: str, color: str | None = None, size: str | None = None, trendline: str | None = "ols", title: str | None = None, download_name: str | None = None, xaxis_title: str | None = None, yaxis_title: str | None = None):
+def scatter(df: pd.DataFrame, x: str, y: str, color: str | None = None, size: str | None = None, trendline: str | None = None, title: str | None = None, download_name: str | None = None, xaxis_title: str | None = None, yaxis_title: str | None = None):
     if df is None or df.empty or x not in df.columns or y not in df.columns:
         st.info("Aucune donnée pour le nuage de points.")
         return
-    fig = px.scatter(df, x=x, y=y, color=color, size=size, trendline=trendline, title=title, color_discrete_sequence=VIBRANT_COLORS, opacity=0.7)
+    
+    # Créer le graphique sans tendance par défaut pour éviter les dépendances
+    fig = px.scatter(df, x=x, y=y, color=color, size=size, title=title, color_discrete_sequence=VIBRANT_COLORS, opacity=0.7)
+    
+    # Ajouter une tendance simple si demandée et si statsmodels est disponible
+    if trendline and trendline != "none":
+        try:
+            import statsmodels.api as sm
+            # Réajouter la tendance si statsmodels est disponible
+            fig = px.scatter(df, x=x, y=y, color=color, size=size, trendline=trendline, title=title, color_discrete_sequence=VIBRANT_COLORS, opacity=0.7)
+        except ImportError:
+            st.info("Tendance désactivée (statsmodels non disponible)")
+    
     fig.update_traces(marker=dict(size=12, line=dict(width=2, color='#1f2937')))
     _apply_common_layout(fig, 
                         xaxis_title=xaxis_title or x.replace('_', ' ').title(),
@@ -252,27 +288,5 @@ def make_color_map(categories):
     flat = [c for bank in banks for c in bank]
     return {cat: flat[i % len(flat)] for i, cat in enumerate(categories)}
 
-def scatter(
-    df, x, y, color=None, title="",
-    color_map=None, opacity=0.55, trendline=None, height=520
-):
-    import plotly.express as px
-    # Catégories ordonnées pour des couleurs stables
-    cat_orders = {color: list(color_map.keys())} if (color and color_map) else None
-
-    fig = px.scatter(
-        df, x=x, y=y, color=color, title=title,
-        trendline=trendline,  # None = pas de régression par région
-        color_discrete_map=color_map or {},
-        category_orders=cat_orders,
-    )
-    fig.update_traces(marker=dict(size=6, opacity=opacity))
-    fig.update_layout(
-        height=height,
-        legend=dict(
-            y=1, x=1.02, yanchor="top", xanchor="left", bgcolor="rgba(0,0,0,0)"
-        )
-    )
-    import streamlit as st
-    st.plotly_chart(fig, use_container_width=True)
+# Fonction scatter supprimée - doublon avec la fonction ci-dessus
 

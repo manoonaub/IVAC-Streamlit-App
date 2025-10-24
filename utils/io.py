@@ -18,11 +18,17 @@ def _read_text_local(path: str | Path) -> str:
 
 
 def _read_text_url(url: str, timeout: int = 60) -> str:
-    """Read text from a remote URL (CSV) with basic error handling."""
-    resp = requests.get(url, timeout=timeout)
-    resp.raise_for_status()
-    # requests gives us unicode text already
-    return resp.text
+    """Read text from a remote URL (CSV) with comprehensive error handling."""
+    try:
+        resp = requests.get(url, timeout=timeout)
+        resp.raise_for_status()
+        return resp.text
+    except requests.exceptions.Timeout:
+        raise ConnectionError(f"Timeout while fetching data from {url}")
+    except requests.exceptions.ConnectionError:
+        raise ConnectionError(f"Could not connect to {url}")
+    except requests.exceptions.HTTPError as e:
+        raise ConnectionError(f"HTTP error {e.response.status_code} when fetching {url}")
 
 
 def _detect_header_index(raw_text: str) -> int:

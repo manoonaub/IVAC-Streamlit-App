@@ -2,6 +2,7 @@
 import re
 from typing import Dict, Tuple
 import pandas as pd
+import streamlit as st
 
 
 
@@ -20,30 +21,55 @@ def _ensure_session_str(df: pd.DataFrame | None) -> pd.DataFrame | None:
 
 
 def _to_snake(s: str) -> str:
-    """Converts a string to snake_case (e.g., 'Taux de réussite G' -> 'taux_de_reussite_g')."""
+    """Converts a string to snake_case with enhanced French character handling."""
+    if not s or not isinstance(s, str):
+        return ""
+    
     s = str(s).strip().lower()
-    s = s.replace("é", "e").replace("è", "e").replace("à", "a").replace("ç", "c")
+    # Enhanced French character normalization
+    replacements = {
+        "é": "e", "è": "e", "ê": "e", "ë": "e",
+        "à": "a", "â": "a", "ä": "a",
+        "ç": "c",
+        "ù": "u", "û": "u", "ü": "u",
+        "ô": "o", "ö": "o",
+        "î": "i", "ï": "i"
+    }
+    
+    for old, new in replacements.items():
+        s = s.replace(old, new)
+    
+    # Remove special characters and convert to snake_case
     s = re.sub(r"[^a-z0-9]+", "_", s)
     s = re.sub(r"_+", "_", s).strip("_")
     return s
 
+@st.cache_data(show_spinner=False)
 def clean_ivac(df: pd.DataFrame) -> pd.DataFrame:
     """Cleans and standardizes the raw IVAC dataframe."""
+    if df is None or df.empty:
+        return df
+    
     d = df.copy()
     d.columns = [_to_snake(c) for c in d.columns]
 
-    num_cols = [
-        "taux_reussite_g", "taux_reussite_p", "va_du_taux_de_reussite_g",
-        "va_de_la_note_g", "note_a_l_ecrit_g", "note_a_l_ecrit_p",
-        "nb_candidats_g", "nb_candidats_p", "taux_d_acces_6eme_3eme",
-        "part_presents_3eme_ordinaire_total", "part_presents_3eme_ordinaire_g",
-        "part_presents_3eme_ordinaire_p", "part_presents_3eme_segpa_total",
-        "nb_mentions_ab_g", "nb_mentions_b_g", "nb_mentions_tb_g",
-        "nb_mentions_global_g"
-    ]
-    for c in num_cols:
-        if c in d.columns:
-            d[c] = pd.to_numeric(d[c], errors="coerce")
+    # Define numeric columns with better organization
+    numeric_columns = {
+        "performance": ["taux_reussite_g", "taux_reussite_p", "va_du_taux_de_reussite_g", "va_de_la_note_g"],
+        "grades": ["note_a_l_ecrit_g", "note_a_l_ecrit_p"],
+        "candidates": ["nb_candidats_g", "nb_candidats_p"],
+        "access": ["taux_d_acces_6eme_3eme"],
+        "attendance": ["part_presents_3eme_ordinaire_total", "part_presents_3eme_ordinaire_g", "part_presents_3eme_ordinaire_p", "part_presents_3eme_segpa_total"],
+        "mentions": ["nb_mentions_ab_g", "nb_mentions_b_g", "nb_mentions_tb_g", "nb_mentions_global_g"]
+    }
+    
+    # Flatten the dictionary to get all numeric columns
+    all_numeric_cols = [col for cols in numeric_columns.values() for col in cols]
+    
+    # Convert to numeric with better error handling
+    for col in all_numeric_cols:
+        if col in d.columns:
+            d[col] = pd.to_numeric(d[col], errors="coerce")
 
     if "valeur_ajoutee" not in d.columns:
         if "va_du_taux_de_reussite_g" in d.columns:

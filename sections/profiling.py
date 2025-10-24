@@ -18,10 +18,10 @@ TEXTS = {
 
         # KPIs
         "kpi_rows": "Rows",
-        "kpi_cols": "Columns (raw → cleaned)",
+        "kpi_cols": "Columns (raw -> cleaned)",
         "kpi_dups": "Duplicate rows (raw)",
         "kpi_uai": "Unique schools (UAI)",
-        "badge_label": "↑ {added} added / {dropped} dropped (net {net:+d})",
+        "badge_label": "up {added} added / {dropped} dropped (net {net:+d})",
 
         # Donut
         "donut_title": "Column structure (before/after cleaning)",
@@ -29,7 +29,7 @@ TEXTS = {
         "donut_added": "Added (engineered)",
         "donut_dropped": "Dropped",
         "eng_cols_caption": "Engineered columns added:",
-        "renamed_expander": "Show renamed columns (raw → cleaned)",
+        "renamed_expander": "Show renamed columns (raw -> cleaned)",
         "no_renamed": "No renamed columns detected.",
         "dropped_caption": "Dropped columns:",
 
@@ -40,7 +40,7 @@ TEXTS = {
         # Missingness
         "missing_title": "🕳️ Missing values (by column)",
         "missing_top": "Most incomplete columns",
-        "missing_legend": "Columns with **_p** suffix belong to the vocational track — higher missingness is expected.",
+        "missing_legend": "Columns with **_p** suffix belong to the vocational track - higher missingness is expected.",
         "missing_none": "No missing values detected in the standardized frame.",
 
         # Validity
@@ -65,7 +65,7 @@ TEXTS = {
         # Quality score & alerts
         "quality_title": "🏆 Data Quality Score",
         "alerts_title": "🔔 Quality alerts",
-        "alerts_none": "No alerts — the dataset looks healthy.",
+        "alerts_none": "No alerts - the dataset looks healthy.",
         "alert_missing": "⚠️ {col}: {pct:.1f}% missing",
         "alert_dups": "🔴 {pct:.1f}% of duplicate rows detected",
 
@@ -90,7 +90,7 @@ TEXTS = {
         "drop_exact": "Drop exact duplicate rows",
         "drop_key": "Drop duplicates by key (UAI, Session)",
         "apply_btn": "Apply cleaning steps",
-        "applied_ok": "Actions applied. NA cells handled: {fixed}. Rows: {before} → {after} (change {after_minus_before:+d}).",
+        "applied_ok": "Actions applied. NA cells handled: {fixed}. Rows: {before} -> {after} (change {after_minus_before:+d}).",
         "save_btn": "Save preview (session)",
         "reset_btn": "Reset preview",
         "save_ok": "Saved to session (key: ivac_cleaned_preview).",
@@ -120,10 +120,10 @@ TEXTS = {
 
         # KPIs
         "kpi_rows": "Lignes",
-        "kpi_cols": "Colonnes (brut → nettoyé)",
+        "kpi_cols": "Colonnes (brut -> nettoyé)",
         "kpi_dups": "Doublons (brut)",
         "kpi_uai": "Collèges uniques (UAI)",
-        "badge_label": "↑ {added} ajoutées / {dropped} supprimées (net {net:+d})",
+        "badge_label": "up {added} ajoutées / {dropped} supprimées (net {net:+d})",
 
         # Donut
         "donut_title": "Structure des colonnes (avant/après nettoyage)",
@@ -131,7 +131,7 @@ TEXTS = {
         "donut_added": "Ajoutées (engineered)",
         "donut_dropped": "Supprimées",
         "eng_cols_caption": "Colonnes dérivées ajoutées :",
-        "renamed_expander": "Afficher les colonnes renommées (brut → nettoyé)",
+        "renamed_expander": "Afficher les colonnes renommées (brut -> nettoyé)",
         "no_renamed": "Aucune colonne renommée détectée.",
         "dropped_caption": "Colonnes supprimées :",
 
@@ -142,7 +142,7 @@ TEXTS = {
         # Missingness
         "missing_title": "🕳️ Valeurs manquantes (par colonne)",
         "missing_top": "Colonnes les plus incomplètes",
-        "missing_legend": "Les colonnes en **_p** appartiennent à la voie pro — un taux élevé de manquants est attendu.",
+        "missing_legend": "Les colonnes en **_p** appartiennent à la voie pro - un taux élevé de manquants est attendu.",
         "missing_none": "Aucune valeur manquante détectée dans le tableau standardisé.",
 
         # Validity
@@ -167,7 +167,7 @@ TEXTS = {
         # Quality score & alerts
         "quality_title": "🏆 Score global de qualité",
         "alerts_title": "🔔 Alertes qualité",
-        "alerts_none": "Aucune alerte — le jeu semble sain.",
+        "alerts_none": "Aucune alerte - le jeu semble sain.",
         "alert_missing": "⚠️ {col} : {pct:.1f}% manquant",
         "alert_dups": "🔴 {pct:.1f}% de doublons détectés",
 
@@ -192,7 +192,7 @@ TEXTS = {
         "drop_exact": "Supprimer les doublons exacts",
         "drop_key": "Supprimer les doublons par clé (UAI, Session)",
         "apply_btn": "Appliquer le nettoyage",
-        "applied_ok": "Actions appliquées. Cellules manquantes traitées : {fixed}. Lignes : {before} → {after} (variation {after_minus_before:+d}).",
+        "applied_ok": "Actions appliquées. Cellules manquantes traitées : {fixed}. Lignes : {before} -> {after} (variation {after_minus_before:+d}).",
         "save_btn": "Sauvegarder l’aperçu (session)",
         "reset_btn": "Réinitialiser l’aperçu",
         "save_ok": "Sauvegardé en session (clé : ivac_cleaned_preview).",
@@ -459,7 +459,7 @@ def show():
     c1, c2, c3, c4 = st.columns(4)
     c1.metric(T["kpi_rows"], f"{rows_raw:,}".replace(",", " "))
     with c2:
-        st.metric(T["kpi_cols"], f"{cols_raw} → {cols_clean}")
+        st.metric(T["kpi_cols"], f"{cols_raw} -> {cols_clean}")
         _green_badge(T["badge_label"].format(added=len(added), dropped=len(dropped), net=cols_clean - cols_raw))
     c3.metric(T["kpi_dups"], f"{int(df_raw.duplicated().sum())}")
     c4.metric(T["kpi_uai"], str(df_base["uai"].nunique()) if "uai" in df_base.columns else "N/A")
@@ -520,7 +520,7 @@ def show():
         with st.expander(T["valid_expander"]):
             for name, frame in base_checks["frames"].items():
                 if len(frame) > 0:
-                    st.markdown(f"**{name}** — {len(frame)}")
+                    st.markdown(f"**{name}** - {len(frame)}")
                     st.dataframe(frame.head(10), use_container_width=True)
 
     st.subheader(T["adv_valid_title"])
@@ -532,7 +532,7 @@ def show():
         st.warning(T["valid_warn"].format(n=sum(len(v) for v in adv.values())))
         with st.expander(T["valid_expander"]):
             for name, frame in adv.items():
-                st.markdown(f"**{name}** — {len(frame)}")
+                st.markdown(f"**{name}** - {len(frame)}")
                 st.dataframe(frame.head(10), use_container_width=True)
 
     st.subheader(T["cross_title"])
@@ -544,7 +544,7 @@ def show():
         st.warning(T["valid_warn"].format(n=sum(len(v) for v in cross.values())))
         with st.expander(T["valid_expander"]):
             for name, frame in cross.items():
-                st.markdown(f"**{name}** — {len(frame)}")
+                st.markdown(f"**{name}** - {len(frame)}")
                 st.dataframe(frame.head(10), use_container_width=True)
 
     st.divider()
@@ -650,7 +650,7 @@ def show():
 
         **🧮 Total candidats**  
         - Nombre d'élèves présentés par collège.  
-        - La majorité entre **80–150** → collèges de taille moyenne ; quelques grands > 300.
+        - La majorité entre **80–150** -> collèges de taille moyenne ; quelques grands > 300.
         """)
     else:
         st.markdown("""

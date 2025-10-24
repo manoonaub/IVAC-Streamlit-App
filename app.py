@@ -77,7 +77,7 @@ st.markdown(
     """
     <hr style="margin-top:3rem;margin-bottom:0.5rem;">
     <div style="font-size:0.9rem;opacity:0.75;text-align:center;">
-        Source: Ministère de l'Éducation nationale —
+        Source: Ministère de l'Éducation nationale -
         <a href="https://www.data.gouv.fr" target="_blank" style="text-decoration:none;">data.gouv.fr</a> ·
         License: Etalab 2.0 ·
         Built with <b style="color:#FF4B4B;">Streamlit</b> 🎈

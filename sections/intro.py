@@ -34,7 +34,7 @@ LANG_TEXT = {
             "- Compare **public vs. private** institutions in terms of added value\n"
             "- Identify **top/bottom schools** to understand what drives success"
         ),
-        "source": "Source: French Ministry of National Education — data.gouv.fr — Etalab 2.0 license",
+        "source": "Source: French Ministry of National Education - data.gouv.fr - Etalab 2.0 license",
         "prep_title": "🧹 Data Preparation Summary",
         "applied_steps": (
             "**Applied steps**:\n"
@@ -58,10 +58,10 @@ LANG_TEXT = {
         "narrative_title": "🧭 Narrative Design",
         "narrative": (
             "We follow a **Comparative & Ranking** pattern:\n"
-            "1. **Data Quality & Profiling** → assess reliability and completeness\n"
-            "2. **Visualization & Analysis** → compare regions/sectors and highlight inequalities\n"
-            "3. **Deep Dives** → detect outliers and top/bottom schools\n"
-            "4. **Conclusions** → insights, implications, recommendations"
+            "1. **Data Quality & Profiling** -> assess reliability and completeness\n"
+            "2. **Visualization & Analysis** -> compare regions/sectors and highlight inequalities\n"
+            "3. **Deep Dives** -> detect outliers and top/bottom schools\n"
+            "4. **Conclusions** -> insights, implications, recommendations"
         ),
         "next": "🧩 **Next step:** go to **Data Quality & Profiling** to validate key indicators before analysis.",
         "metric_rows": "Rows",
@@ -79,7 +79,7 @@ LANG_TEXT = {
         "donut_added": "Added (engineered)",
         "donut_dropped": "Dropped",
         "eng_cols_caption": "🧩 **Engineered columns added:**",
-        "renamed_expander": "🔄 Show renamed columns (raw → cleaned)",
+        "renamed_expander": "🔄 Show renamed columns (raw -> cleaned)",
         "no_renamed": "No renamed columns detected.",
         "dropped_caption": "🗑️ Dropped columns:",
     },
@@ -105,7 +105,7 @@ LANG_TEXT = {
             "- Comparer **secteur public vs privé** en termes de valeur ajoutée\n"
             "- Identifier les **meilleurs/moins bons collèges** pour comprendre les facteurs de succès"
         ),
-        "source": "Source : Ministère de l’Éducation nationale — data.gouv.fr — Licence Etalab 2.0",
+        "source": "Source : Ministère de l’Éducation nationale - data.gouv.fr - Licence Etalab 2.0",
         "prep_title": "🧹 Synthèse de la préparation des données",
         "applied_steps": (
             "**Étapes appliquées** :\n"
@@ -116,7 +116,7 @@ LANG_TEXT = {
             "Ces transformations garantissent des comparaisons fiables et reproductibles."
         ),
         "preview_title": "📋 Aperçu des 5 premières lignes (standardisées)",
-        "checklist_title": "✅ Checklist — Choix du jeu de données",
+        "checklist_title": "✅ Checklist - Choix du jeu de données",
         "checklist_table": (
             "| Critère | Justification |\n"
             "|:--|:--|\n"
@@ -129,10 +129,10 @@ LANG_TEXT = {
         "narrative_title": "🧭 Trame narrative",
         "narrative": (
             "Nous suivons un schéma **Comparaisons & Classements** :\n"
-            "1. **Data Quality & Profiling** → fiabilité et complétude\n"
-            "2. **Visualization & Analysis** → comparaisons régions/secteurs et inégalités\n"
-            "3. **Deep Dives** → détection d’outliers et top/bottom\n"
-            "4. **Conclusions** → enseignements, implications, recommandations"
+            "1. **Data Quality & Profiling** -> fiabilité et complétude\n"
+            "2. **Visualization & Analysis** -> comparaisons régions/secteurs et inégalités\n"
+            "3. **Deep Dives** -> détection d’outliers et top/bottom\n"
+            "4. **Conclusions** -> enseignements, implications, recommandations"
         ),
         "next": "🧩 **Étape suivante :** ouvrir **Data Quality & Profiling** pour valider les indicateurs clés avant l’analyse.",
         "metric_rows": "Lignes",
@@ -150,7 +150,7 @@ LANG_TEXT = {
         "donut_added": "Ajoutées (engineered)",
         "donut_dropped": "Supprimées",
         "eng_cols_caption": "🧩 **Colonnes dérivées ajoutées :**",
-        "renamed_expander": "🔄 Voir les colonnes renommées (raw → cleaned)",
+        "renamed_expander": "🔄 Voir les colonnes renommées (raw -> cleaned)",
         "no_renamed": "Aucune colonne renommée détectée.",
         "dropped_caption": "🗑️ Colonnes supprimées :",
     },
@@ -202,7 +202,7 @@ def show():
     # Call-to-action
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button("🚀 Explore the Data Now →", use_container_width=True, type="primary"):
+        if st.button("🚀 Explore the Data Now ->", use_container_width=True, type="primary"):
             st.query_params["page"] = "Overview & Analysis"
             st.rerun()
 
@@ -221,10 +221,14 @@ def show():
     if T.get("prep_title"):
         st.subheader(T["prep_title"])
 
-    # Load / clean / diff
-    df_raw = load_data()
-    df_clean = clean_ivac(df_raw)
-    diff = diff_columns_breakdown(df_raw, df_clean)
+    # Load / clean / diff with error handling
+    try:
+        df_raw = load_data()
+        df_clean = clean_ivac(df_raw)
+        diff = diff_columns_breakdown(df_raw, df_clean)
+    except Exception as e:
+        st.error(f"Erreur lors du chargement des données: {str(e)}")
+        st.stop()
 
     #  KPIs
     c1, c2, c3, c4, c5 = st.columns(5)
@@ -239,8 +243,8 @@ def show():
         "{eng} added / {drop} dropped (net {net:+d})"
     )
     c2.metric(
-        f"{T.get('metric_cols','Columns')} (raw → cleaned)",
-        f"{df_raw.shape[1]} → {df_clean.shape[1]}",
+        f"{T.get('metric_cols','Columns')} (raw -> cleaned)",
+        f"{df_raw.shape[1]} -> {df_clean.shape[1]}",
         delta=delta_fmt.format(eng=engineered_count, drop=dropped_count, net=net_delta),
     )
 
@@ -270,14 +274,14 @@ def show():
     fig.update_traces(textposition="inside", textinfo="percent+label")
     st.plotly_chart(fig, use_container_width=True)
     st.markdown(
-        "> **Legend** — *Kept/Renamed*: original columns kept or renamed · "
+        "> **Legend** - *Kept/Renamed*: original columns kept or renamed · "
         "*Added (engineered)*: columns created during cleaning (e.g., `valeur_ajoutee`, `row_id`) · "
         "*Dropped*: columns removed (duplicates, replaced, or irrelevant)."
     )
     
 
     if df_clean.shape[0] != df_raw.shape[0]:
-        st.warning(f"⚠️ Row count changed during cleaning: {df_raw.shape[0]} → {df_clean.shape[0]}")
+        st.warning(f"⚠️ Row count changed during cleaning: {df_raw.shape[0]} -> {df_clean.shape[0]}")
     
     missing_cols = [col for col in ["valeur_ajoutee", "nb_candidats_total", "row_id"] if col not in df_clean.columns]
     if missing_cols:
@@ -287,7 +291,7 @@ def show():
     if diff.get("engineered"):
         st.caption(f"{T.get('eng_cols_caption','Engineered columns added:')} {', '.join(diff['engineered'])}")
 
-    with st.expander(T.get("renamed_expander", "Show renamed columns (raw → cleaned)")):
+    with st.expander(T.get("renamed_expander", "Show renamed columns (raw -> cleaned)")):
         renamed_data = diff.get("renamed", [])
         if renamed_data:
             st.dataframe(

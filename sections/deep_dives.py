@@ -21,15 +21,15 @@ TEXTS = {
         "intro_text": """
 The **Deep Dives** page goes beyond the national averages presented in the Analysis section.
 It aims to identify **structural and contextual factors** that influence school performance.
-The goal is to understand **why** some schools achieve better results than others — not just **how much**.
+The goal is to understand **why** some schools achieve better results than others - not just **how much**.
 """,
         "methods_title": "🧩 Methods Used",
         "method_1": "**1. Analysis by School Size:**",
         "method_1_desc": "Compares average performance (VA) between small, medium, and large schools. This approach reveals the possible impact of size on success or added value.",
-        "method_2": "**2. Sector × Size Interaction:**",
+        "method_2": "**2. Sector x Size Interaction:**",
         "method_2_desc": "Studies whether size effects differ between public and private schools. This helps determine if sector modifies the relationship between size and performance.",
         "method_3": "**3. Outliers Analysis:**",
-        "method_3_desc": "Identifies atypical schools — those with extremely high or low VA. These isolated cases often help spot innovative practices or unfavorable contexts.",
+        "method_3_desc": "Identifies atypical schools - those with extremely high or low VA. These isolated cases often help spot innovative practices or unfavorable contexts.",
         "method_4": "**4. Detailed Regional Analysis:**",
         "method_4_desc": "Breaks down a region's performance by department to detect internal disparities.",
         
@@ -67,15 +67,15 @@ They reveal **hidden dynamics** behind averages and pave the way for reflection 
         "intro_text": """
 La page **Deep Dives** vise à aller au-delà de la moyenne nationale présentée dans la section Analysis.
 Elle permet d'identifier les **facteurs structurels et contextuels** qui influencent la performance des établissements.
-L'objectif est de comprendre **pourquoi** certaines écoles obtiennent de meilleurs résultats que d'autres — pas seulement **combien**.
+L'objectif est de comprendre **pourquoi** certaines écoles obtiennent de meilleurs résultats que d'autres - pas seulement **combien**.
 """,
         "methods_title": "🧩 Méthodes utilisées",
         "method_1": "**1. Analyse par taille d'établissement :**",
         "method_1_desc": "Permet de comparer la performance moyenne (VA) entre petits, moyens et grands établissements. Cette approche révèle l'impact possible de la taille sur la réussite ou la valeur ajoutée.",
-        "method_2": "**2. Croisement Secteur × Taille :**",
+        "method_2": "**2. Croisement Secteur x Taille :**",
         "method_2_desc": "Étudie si les effets de taille diffèrent entre les établissements publics et privés. On peut ainsi déterminer si le secteur modifie la relation entre la taille et la performance.",
         "method_3": "**3. Analyse des Outliers :**",
-        "method_3_desc": "Identifie les établissements atypiques — ceux qui obtiennent une VA extrêmement haute ou basse. Ces cas isolés permettent souvent de repérer des pratiques innovantes ou des contextes défavorables.",
+        "method_3_desc": "Identifie les établissements atypiques - ceux qui obtiennent une VA extrêmement haute ou basse. Ces cas isolés permettent souvent de repérer des pratiques innovantes ou des contextes défavorables.",
         "method_4": "**4. Analyse régionale détaillée :**",
         "method_4_desc": "Décompose la performance d'une région par département afin de détecter des disparités internes.",
         
@@ -246,26 +246,26 @@ def show():
 **📊 What we observe:**
 - **Trajectory:** The school's value added {f"**increased by {va_trend:+.2f} points**" if va_trend > 0 else f"**decreased by {abs(va_trend):.2f} points**" if va_trend < 0 else "remained **stable**"} over the observed sessions.
 - **Average performance:** **{va_mean:+.2f}** (vs 0 expected).
-- **Consistency:** {"Stable performance, little volatility." if va_values.std() < 2 else "Significant fluctuations detected — possible cohort or staff changes."}
+- **Consistency:** {"Stable performance, little volatility." if va_values.std() < 2 else "Significant fluctuations detected - possible cohort or staff changes."}
 
 **🧠 Interpretation:**
 {f"This school **consistently outperforms** expectations across multiple sessions. Likely due to strong pedagogical practices or favorable student composition." if va_mean > 2 else f"The school struggles to reach expected levels. May require targeted support or faces structural challenges." if va_mean < -2 else "Performance is **in line with expectations** given the school's context."}
 
 **💡 Conclusion:**
-{"🌟 **Best practice candidate** — consider studying this school's methods for replication." if va_mean > 3 else "⚠️ **Requires attention** — investigate root causes and implement interventions." if va_mean < -3 else "✅ **Standard trajectory** — monitor for consistency."}
+{"🌟 **Best practice candidate** - consider studying this school's methods for replication." if va_mean > 3 else "⚠️ **Requires attention** - investigate root causes and implement interventions." if va_mean < -3 else "✅ **Standard trajectory** - monitor for consistency."}
 """)
                 else:
                     analysis_container(f"""
 **📊 Ce que l'on observe :**
 - **Trajectoire :** La valeur ajoutée de l'établissement {f"**a augmenté de {va_trend:+.2f} points**" if va_trend > 0 else f"**a diminué de {abs(va_trend):.2f} points**" if va_trend < 0 else "est restée **stable**"} sur les sessions observées.
 - **Performance moyenne :** **{va_mean:+.2f}** (vs 0 attendu).
-- **Constance :** {"Performance stable, peu de volatilité." if va_values.std() < 2 else "Fluctuations significatives détectées — possibles changements de cohorte ou d'équipe."}
+- **Constance :** {"Performance stable, peu de volatilité." if va_values.std() < 2 else "Fluctuations significatives détectées - possibles changements de cohorte ou d'équipe."}
 
 **🧠 Interprétation :**
 {f"Cet établissement **sur-performe constamment** les attentes sur plusieurs sessions. Probablement dû à des pratiques pédagogiques solides ou une composition d'élèves favorable." if va_mean > 2 else f"L'établissement peine à atteindre les niveaux attendus. Peut nécessiter un soutien ciblé ou fait face à des défis structurels." if va_mean < -2 else "La performance est **conforme aux attentes** compte tenu du contexte de l'établissement."}
 
 **💡 Conclusion :**
-{"🌟 **Candidat bonnes pratiques** — envisager d'étudier les méthodes de cet établissement pour réplication." if va_mean > 3 else "⚠️ **Nécessite attention** — investiguer les causes profondes et mettre en place des interventions." if va_mean < -3 else "✅ **Trajectoire standard** — surveiller pour cohérence."}
+{"🌟 **Candidat bonnes pratiques** - envisager d'étudier les méthodes de cet établissement pour réplication." if va_mean > 3 else "⚠️ **Nécessite attention** - investiguer les causes profondes et mettre en place des interventions." if va_mean < -3 else "✅ **Trajectoire standard** - surveiller pour cohérence."}
 """)
         
         if "taux_reussite_g" in df_etab.columns and not df_etab.empty:
@@ -341,7 +341,7 @@ Comparez ce graphique avec celui de la valeur ajoutée ci-dessus. Si les taux so
 - **Standout leader:** **{df_rank.iloc[0]['nom_de_l_etablissement']}** with {df_rank.iloc[0][rank_metric]:.2f}
 
 **🧠 What this reveals:**
-These schools demonstrate **exceptional performance** within the academy. The gap between #1 and #{top_n} ({(top_values.max() - top_values.min()):.2f} points) indicates {"high variability — even among top performers" if (top_values.max() - top_values.min()) > 3 else "consistent excellence across the top tier"}.
+These schools demonstrate **exceptional performance** within the academy. The gap between #1 and #{top_n} ({(top_values.max() - top_values.min()):.2f} points) indicates {"high variability - even among top performers" if (top_values.max() - top_values.min()) > 3 else "consistent excellence across the top tier"}.
 
 **💡 Action:** Conduct case studies on these schools to identify transferable best practices (teaching methods, student support systems, resource allocation).
 """)
@@ -353,7 +353,7 @@ These schools demonstrate **exceptional performance** within the academy. The ga
 - **Leader incontesté :** **{df_rank.iloc[0]['nom_de_l_etablissement']}** avec {df_rank.iloc[0][rank_metric]:.2f}
 
 **🧠 Ce que cela révèle :**
-Ces établissements démontrent des **performances exceptionnelles** au sein de l'académie. L'écart entre le #1 et le #{top_n} ({(top_values.max() - top_values.min()):.2f} points) indique {"une forte variabilité — même parmi les meilleurs" if (top_values.max() - top_values.min()) > 3 else "une excellence cohérente dans le top tier"}.
+Ces établissements démontrent des **performances exceptionnelles** au sein de l'académie. L'écart entre le #1 et le #{top_n} ({(top_values.max() - top_values.min()):.2f} points) indique {"une forte variabilité - même parmi les meilleurs" if (top_values.max() - top_values.min()) > 3 else "une excellence cohérente dans le top tier"}.
 
 **💡 Action :** Conduire des études de cas sur ces établissements pour identifier les bonnes pratiques transférables (méthodes d'enseignement, systèmes de soutien, allocation des ressources).
 """)
@@ -439,7 +439,7 @@ Ces établissements démontrent des **performances exceptionnelles** au sein de 
 - **Gap:** {best_va - worst_va:.2f} points between categories
 
 **🧠 Interpretation:**
-{"Medium-sized schools (50-150 students) tend to perform best — they balance individualized attention with sufficient resources and peer diversity." if "Medium" in str(best_size) or "Moyen" in str(best_size) else f"{best_size} schools show the highest value added, suggesting this size offers optimal conditions for student success."}
+{"Medium-sized schools (50-150 students) tend to perform best - they balance individualized attention with sufficient resources and peer diversity." if "Medium" in str(best_size) or "Moyen" in str(best_size) else f"{best_size} schools show the highest value added, suggesting this size offers optimal conditions for student success."}
 
 **💡 Conclusion:**
 Size matters, but it's not deterministic. {"Small schools may struggle with limited resources, while very large schools face individualization challenges." if "Medium" in str(best_size) or "Moyen" in str(best_size) else "School management and pedagogy can compensate for size constraints."}
@@ -452,7 +452,7 @@ Size matters, but it's not deterministic. {"Small schools may struggle with limi
 - **Écart :** {best_va - worst_va:.2f} points entre catégories
 
 **🧠 Interprétation :**
-{"Les établissements de taille moyenne (50-150 élèves) tendent à mieux performer — ils équilibrent attention individualisée et ressources/diversité suffisantes." if "Medium" in str(best_size) or "Moyen" in str(best_size) else f"Les établissements {best_size} affichent la plus forte valeur ajoutée, suggérant que cette taille offre des conditions optimales pour la réussite."}
+{"Les établissements de taille moyenne (50-150 élèves) tendent à mieux performer - ils équilibrent attention individualisée et ressources/diversité suffisantes." if "Medium" in str(best_size) or "Moyen" in str(best_size) else f"Les établissements {best_size} affichent la plus forte valeur ajoutée, suggérant que cette taille offre des conditions optimales pour la réussite."}
 
 **💡 Conclusion :**
 La taille compte, mais n'est pas déterministe. {"Les petits établissements peuvent manquer de ressources, tandis que les très grands peinent à individualiser." if "Medium" in str(best_size) or "Moyen" in str(best_size) else "La gestion et la pédagogie peuvent compenser les contraintes de taille."}
@@ -467,9 +467,9 @@ La taille compte, mais n'est pas déterministe. {"Les petits établissements peu
         no_data_msg = "Required columns not available." if T is TEXTS["en"] else "Colonnes requises non disponibles."
         st.info(no_data_msg)
     
-    # methode 2 : Croisement Secteur × Taille
+    # methode 2 : Croisement Secteur x Taille
     st.markdown("---")
-    method2_title = "**Method 2:** Sector × Size Interaction" if T is TEXTS["en"] else "**Méthode 2 :** Croisement Secteur × Taille"
+    method2_title = "**Method 2:** Sector x Size Interaction" if T is TEXTS["en"] else "**Méthode 2 :** Croisement Secteur x Taille"
     st.markdown(f"### {method2_title}")
     
     if "nb_candidats_g" in df_acad_sess.columns and "valeur_ajoutee" in df_acad_sess.columns and "secteur" in df_acad_sess.columns:
@@ -488,18 +488,18 @@ La taille compte, mais n'est pas déterministe. {"Les petits établissements peu
             cross_summary = df_cross.groupby(["secteur", "size_category"], observed=True)["valeur_ajoutee"].mean().reset_index()
             
             if not cross_summary.empty:
-                cross_title = "Added value: Sector × Size" if T is TEXTS["en"] else "Valeur ajoutée : Secteur × Taille"
+                cross_title = "Added value: Sector x Size" if T is TEXTS["en"] else "Valeur ajoutée : Secteur x Taille"
                 bar_chart(cross_summary, x="size_category", y="valeur_ajoutee", color="secteur",
                          title=cross_title, ref_y=0)
                 
-                #  ANALYSE SECTEUR × TAILLE (boîte colorée)
+                #  ANALYSE SECTEUR x TAILLE (boîte colorée)
                 if "PU" in cross_summary["secteur"].values and "PR" in cross_summary["secteur"].values:
                     pu_mean = cross_summary[cross_summary["secteur"] == "PU"]["valeur_ajoutee"].mean()
                     pr_mean = cross_summary[cross_summary["secteur"] == "PR"]["valeur_ajoutee"].mean()
                     
                     if T is TEXTS["en"]:
                         st.info(f"""
-**📊 Sector × Size Interaction:**
+**📊 Sector x Size Interaction:**
 - **Public (PU) average:** {pu_mean:.2f}
 - **Private (PR) average:** {pr_mean:.2f}
 - **Sector gap:** {pr_mean - pu_mean:+.2f} points
@@ -508,11 +508,11 @@ La taille compte, mais n'est pas déterministe. {"Les petits établissements peu
 {"Private schools outperform public schools across size categories. However, the gap may be larger in small schools (selection effects) and narrower in large schools (regression to the mean)." if pr_mean > pu_mean else "Public schools show competitive or superior performance compared to private schools in this academy, challenging national stereotypes."}
 
 **💡 Conclusion:**
-Sector effects interact with size. {"Private schools' advantage is not universal — it varies by school size and local context." if pr_mean > pu_mean else "Public schools demonstrate that with adequate resources and management, they can match or exceed private sector performance."}
+Sector effects interact with size. {"Private schools' advantage is not universal - it varies by school size and local context." if pr_mean > pu_mean else "Public schools demonstrate that with adequate resources and management, they can match or exceed private sector performance."}
 """)
                     else:
                         st.info(f"""
-**📊 Interaction Secteur × Taille :**
+**📊 Interaction Secteur x Taille :**
 - **Moyenne Public (PU) :** {pu_mean:.2f}
 - **Moyenne Privé (PR) :** {pr_mean:.2f}
 - **Écart sectoriel :** {pr_mean - pu_mean:+.2f} points
@@ -521,7 +521,7 @@ Sector effects interact with size. {"Private schools' advantage is not universal
 {"Le privé sur-performe le public dans toutes les catégories de taille. Cependant, l'écart peut être plus important dans les petits établissements (effets de sélection) et plus étroit dans les grands (régression vers la moyenne)." if pr_mean > pu_mean else "Le public montre des performances compétitives ou supérieures au privé dans cette académie, challengeant les stéréotypes nationaux."}
 
 **💡 Conclusion :**
-Les effets sectoriels interagissent avec la taille. {"L'avantage du privé n'est pas universel — il varie selon la taille et le contexte local." if pr_mean > pu_mean else "Le public démontre qu'avec des ressources et une gestion adéquates, il peut égaler ou dépasser le privé."}
+Les effets sectoriels interagissent avec la taille. {"L'avantage du privé n'est pas universel - il varie selon la taille et le contexte local." if pr_mean > pu_mean else "Le public démontre qu'avec des ressources et une gestion adéquates, il peut égaler ou dépasser le privé."}
 """)
             else:
                 no_data_msg = "Not enough data for sector-size interaction." if T is TEXTS["en"] else "Pas assez de données pour le croisement secteur-taille."
@@ -692,10 +692,10 @@ Les stratégies au niveau académique doivent être **différenciées par dépar
             st.info(f"""
 **📊 Candidates vs Pass Rate Relationship:**
 - **Correlation:** r = {corr:.3f} {"(weak)" if abs(corr) < 0.3 else "(moderate)" if abs(corr) < 0.6 else "(strong)"}
-- **Pattern:** {"No clear relationship — school size doesn't predict pass rates." if abs(corr) < 0.3 else f"{'Positive' if corr > 0 else 'Negative'} relationship detected."}
+- **Pattern:** {"No clear relationship - school size doesn't predict pass rates." if abs(corr) < 0.3 else f"{'Positive' if corr > 0 else 'Negative'} relationship detected."}
 
 **🧠 Interpretation:**
-{"This scatter plot shows **dispersion** — schools with similar sizes have very different outcomes. This confirms that **size is not destiny**. Management quality, teaching methods, and local context matter more than student numbers." if abs(corr) < 0.3 else "The correlation suggests size may play a role, but significant variability remains. Other factors (pedagogy, resources) explain most of the variance."}
+{"This scatter plot shows **dispersion** - schools with similar sizes have very different outcomes. This confirms that **size is not destiny**. Management quality, teaching methods, and local context matter more than student numbers." if abs(corr) < 0.3 else "The correlation suggests size may play a role, but significant variability remains. Other factors (pedagogy, resources) explain most of the variance."}
 
 **💡 Takeaway:**
 Don't judge schools by size alone. {"Small schools can excel with individualized attention; large schools can succeed with strong organization." if abs(corr) < 0.3 else "Size effects exist but are mediated by school practices and leadership."}
@@ -704,10 +704,10 @@ Don't judge schools by size alone. {"Small schools can excel with individualized
             st.info(f"""
 **📊 Relation Candidats vs Taux de Réussite :**
 - **Corrélation :** r = {corr:.3f} {"(faible)" if abs(corr) < 0.3 else "(modérée)" if abs(corr) < 0.6 else "(forte)"}
-- **Pattern :** {"Pas de relation claire — la taille de l'établissement ne prédit pas les taux de réussite." if abs(corr) < 0.3 else f"Relation {'positive' if corr > 0 else 'négative'} détectée."}
+- **Pattern :** {"Pas de relation claire - la taille de l'établissement ne prédit pas les taux de réussite." if abs(corr) < 0.3 else f"Relation {'positive' if corr > 0 else 'négative'} détectée."}
 
 **🧠 Interprétation :**
-{"Ce nuage de points montre une **dispersion** — des établissements de tailles similaires ont des résultats très différents. Cela confirme que **la taille n'est pas un destin**. La qualité de la gestion, les méthodes d'enseignement et le contexte local comptent plus que le nombre d'élèves." if abs(corr) < 0.3 else "La corrélation suggère que la taille peut jouer un rôle, mais une variabilité significative demeure. D'autres facteurs (pédagogie, ressources) expliquent l'essentiel de la variance."}
+{"Ce nuage de points montre une **dispersion** - des établissements de tailles similaires ont des résultats très différents. Cela confirme que **la taille n'est pas un destin**. La qualité de la gestion, les méthodes d'enseignement et le contexte local comptent plus que le nombre d'élèves." if abs(corr) < 0.3 else "La corrélation suggère que la taille peut jouer un rôle, mais une variabilité significative demeure. D'autres facteurs (pédagogie, ressources) expliquent l'essentiel de la variance."}
 
 **💡 Retenir :**
 Ne pas juger un établissement uniquement sur sa taille. {"Les petits peuvent exceller avec attention individualisée ; les grands peuvent réussir avec une organisation solide." if abs(corr) < 0.3 else "Les effets de taille existent mais sont médiés par les pratiques et le leadership de l'établissement."}
@@ -733,7 +733,7 @@ Ne pas juger un établissement uniquement sur sa taille. {"Les petits peuvent ex
 - **Shape:** {"Right-skewed (most schools above average)" if rate_mean < rate_median else "Left-skewed (tail of struggling schools)" if rate_mean > rate_median else "Symmetric distribution"}
 
 **🧠 What this shows:**
-{"The distribution is concentrated around {rate_median:.0f}%, indicating **homogeneous performance** across schools in this academy. Most schools deliver similar results." if rate_std < 5 else f"Significant dispersion (σ = {rate_std:.1f}) reveals **heterogeneous performance**. Some schools excel (>95%), while others struggle (<70%)."}
+{"The distribution is concentrated around {rate_median:.0f}%, indicating **homogeneous performance** across schools in this academy. Most schools deliver similar results." if rate_std < 5 else f"Significant dispersion (sigma = {rate_std:.1f}) reveals **heterogeneous performance**. Some schools excel (>95%), while others struggle (<70%)."}
 
 **💡 Implication:**
 {"Consistency is good, but innovation may be lacking. Encourage experimentation to push the top end higher." if rate_std < 5 else "High variability signals inequality. Targeted support for low-performers and knowledge transfer from high-performers are needed."}
@@ -747,7 +747,7 @@ Ne pas juger un établissement uniquement sur sa taille. {"Les petits peuvent ex
 - **Forme :** {"Asymétrie à droite (plupart au-dessus de la moyenne)" if rate_mean < rate_median else "Asymétrie à gauche (queue d'établissements en difficulté)" if rate_mean > rate_median else "Distribution symétrique"}
 
 **🧠 Ce que cela montre :**
-{"La distribution est concentrée autour de {rate_median:.0f}%, indiquant une **performance homogène** entre établissements de cette académie. La plupart délivrent des résultats similaires." if rate_std < 5 else f"Une dispersion significative (σ = {rate_std:.1f}) révèle une **performance hétérogène**. Certains excellent (>95%), tandis que d'autres peinent (<70%)."}
+{"La distribution est concentrée autour de {rate_median:.0f}%, indiquant une **performance homogène** entre établissements de cette académie. La plupart délivrent des résultats similaires." if rate_std < 5 else f"Une dispersion significative (sigma = {rate_std:.1f}) révèle une **performance hétérogène**. Certains excellent (>95%), tandis que d'autres peinent (<70%)."}
 
 **💡 Implication :**
 {"La cohérence est bonne, mais l'innovation peut manquer. Encourager l'expérimentation pour pousser le haut de gamme plus haut." if rate_std < 5 else "Une forte variabilité signale l'inégalité. Soutien ciblé pour les faibles performeurs et transfert de connaissances depuis les hauts performeurs sont nécessaires."}

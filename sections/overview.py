@@ -13,22 +13,22 @@ from utils.geo import load_geojson, map_chart
 
 TEXTS = {
     "en": {
-        "language": "Language", "en": "English", "fr": "Français",
-        "header": "🎯 Overview & Analysis",
-        "intro": "📊 This page provides a comprehensive view of IVAC results: trends, territorial disparities, sector comparison, and key insights.",
+        "language": "Language", "en": "English", "fr": "Francais",
+        "header": "Overview & Analysis",
+        "intro": "This page provides a comprehensive view of IVAC results: trends, territorial disparities, sector comparison, and key insights.",
         
         # Filters
-        "filters_title": "🔧 Filters",
-        "filter_session": "📅 Session",
-        "filter_regions": "🗺️ Regions",
-        "filter_sector": "🏫 Sector",
+        "filters_title": "Filters",
+        "filter_session": "Session",
+        "filter_regions": "Regions",
+        "filter_sector": "Sector",
         "sector_all": "All sectors",
         
         # KPIs
         "exec_title": "🎯 Key Performance Indicators",
         "kpi_rate": " Avg pass rate",
         "kpi_va": " Avg value added",
-        "kpi_sigma": "📊 Dispersion (σ)",
+        "kpi_sigma": "📊 Dispersion (sigma)",
         "kpi_n": "Schools",
         "exec_success": "✅ **Excellent performance**: strong value added nationally.",
         "exec_alert": "🔴 **Alerts detected**: performance below expectations.",
@@ -38,7 +38,7 @@ TEXTS = {
         "trend_title": "📈 Temporal Evolution",
         "trend_caption": "Rising line suggests national improvement; compare to latest session mean.",
         "multi_title": "Joint evolution: VA & Pass rate",
-        "multi_note": "**Reading guide:** Both up → improvement | Pass rate up but VA flat → grade inflation | VA up but pass rate flat → qualitative improvement.",
+        "multi_note": "**Reading guide:** Both up -> improvement | Pass rate up but VA flat -> grade inflation | VA up but pass rate flat -> qualitative improvement.",
         
         # Regional
         "regional_title": "🗺️ Territorial Disparities",
@@ -61,19 +61,19 @@ TEXTS = {
         "sector_test": "🧮 Statistical test (t-test)",
         "stat_sig": "✅ Significant difference (p = {p:.4f})",
         "stat_nsig": "ℹ️ No significant difference (p = {p:.4f})",
-        "sector_delta": "Δ(Private − Public) = {delta:+.2f} VA points",
-        "sector_caption": "⚠️ Difference ≠ causality (selection effects, context...).",
+        "sector_delta": "Delta(Private − Public) = {delta:+.2f} VA points",
+        "sector_caption": "⚠️ Difference != causality (selection effects, context...).",
         
         # Correlation
         "corrmatrix_title": "🔗 Correlation Matrix",
-        "corrmatrix_caption": "Pearson coefficients between key variables. Values close to ±1 indicate strong relationships.",
+        "corrmatrix_caption": "Pearson coefficients between key variables. Values close to +/-1 indicate strong relationships.",
         
         # Synthesis
         "synthesis_title": "🧾 National Synthesis",
-        "synthesis_intro": "The analysis of session **{session}** presents a nuanced picture of the French educational system. With an average pass rate of **{rate:.1f}%**, the **average value added (VA = {va:+.2f})** indicates performance {va_interp}, while remaining globally stable (σ = {sigma:.2f}).",
+        "synthesis_intro": "The analysis of session **{session}** presents a nuanced picture of the French educational system. With an average pass rate of **{rate:.1f}%**, the **average value added (VA = {va:+.2f})** indicates performance {va_interp}, while remaining globally stable (sigma = {sigma:.2f}).",
         "synthesis_regional": "Regional disparities persist: **{best}** stands out as top performer, while **{worst}** shows more modest results.",
         "synthesis_sector": "The **private sector** shows a {direction} (**{gap:+.2f} VA points**) compared to public schools, though this may reflect **selection effects rather than structural inequality**.",
-        "synthesis_conclusion": "🔍 **In conclusion:** session {session} depicts a system still solid, but with persistent disparities — calling for targeted support and replication of best practices from leading regions.",
+        "synthesis_conclusion": "🔍 **In conclusion:** session {session} depicts a system still solid, but with persistent disparities - calling for targeted support and replication of best practices from leading regions.",
         "va_below": "slightly below expectations",
         "va_within": "within expectations",
         "va_above": "above expectations",
@@ -100,7 +100,7 @@ TEXTS = {
         "exec_title": "🎯 Indicateurs Clés de Performance",
         "kpi_rate": "🎓 Taux moyen",
         "kpi_va": "📈 VA moyenne",
-        "kpi_sigma": "📊 Dispersion (σ)",
+        "kpi_sigma": "📊 Dispersion (sigma)",
         "kpi_n": "Établissements",
         "exec_success": "✅ **Performance excellente** : forte valeur ajoutée nationale.",
         "exec_alert": "🔴 **Alertes détectées** : performance en-dessous des attentes.",
@@ -110,7 +110,7 @@ TEXTS = {
         "trend_title": "📈 Évolution Temporelle",
         "trend_caption": "Courbe ascendante suggère une amélioration nationale ; comparez à la moyenne de la dernière session.",
         "multi_title": "Évolution conjointe : VA & Taux de réussite",
-        "multi_note": "**Lecture :** Les deux montent → amélioration | Taux ↑ mais VA plate → inflation des notes | VA ↑ mais taux stable → amélioration qualitative.",
+        "multi_note": "**Lecture :** Les deux montent -> amélioration | Taux up mais VA plate -> inflation des notes | VA up mais taux stable -> amélioration qualitative.",
         
         # Regional
         "regional_title": "🗺️ Disparités Territoriales",
@@ -133,19 +133,19 @@ TEXTS = {
         "sector_test": "🧮 Test statistique (t-test)",
         "stat_sig": "✅ Différence significative (p = {p:.4f})",
         "stat_nsig": "ℹ️ Pas de différence significative (p = {p:.4f})",
-        "sector_delta": "Δ(Privé − Public) = {delta:+.2f} points de VA",
-        "sector_caption": "⚠️ Différence ≠ causalité (effets de sélection, contexte...).",
+        "sector_delta": "Delta(Privé − Public) = {delta:+.2f} points de VA",
+        "sector_caption": "⚠️ Différence != causalité (effets de sélection, contexte...).",
         
         # Correlation
         "corrmatrix_title": "🔗 Matrice de Corrélation",
-        "corrmatrix_caption": "Coefficients de Pearson entre variables clés. Valeurs proches de ±1 indiquent des relations fortes.",
+        "corrmatrix_caption": "Coefficients de Pearson entre variables clés. Valeurs proches de +/-1 indiquent des relations fortes.",
         
         # Synthesis
         "synthesis_title": "🧾 Synthèse Nationale",
-        "synthesis_intro": "L'analyse de la session **{session}** présente un tableau nuancé du système éducatif français. Avec un taux de réussite moyen de **{rate:.1f}%**, la **valeur ajoutée moyenne (VA = {va:+.2f})** indique des performances {va_interp}, restant globalement stables (σ = {sigma:.2f}).",
+        "synthesis_intro": "L'analyse de la session **{session}** présente un tableau nuancé du système éducatif français. Avec un taux de réussite moyen de **{rate:.1f}%**, la **valeur ajoutée moyenne (VA = {va:+.2f})** indique des performances {va_interp}, restant globalement stables (sigma = {sigma:.2f}).",
         "synthesis_regional": "Les écarts régionaux demeurent marqués : **{best}** se distingue comme région la plus performante, tandis que **{worst}** affiche des résultats plus modestes.",
         "synthesis_sector": "Le **secteur privé** présente un {direction} (**{gap:+.2f} points de VA**) par rapport au public, bien qu'il puisse s'agir d'un **effet de sélection plus que d'une différence structurelle**.",
-        "synthesis_conclusion": "🔍 **En conclusion :** la session {session} illustre un système solide mais hétérogène — nécessitant un accompagnement ciblé et une diffusion des bonnes pratiques issues des régions leaders.",
+        "synthesis_conclusion": "🔍 **En conclusion :** la session {session} illustre un système solide mais hétérogène - nécessitant un accompagnement ciblé et une diffusion des bonnes pratiques issues des régions leaders.",
         "va_below": "légèrement en deçà des attentes",
         "va_within": "conformes aux attentes",
         "va_above": "au-dessus des attentes",
@@ -171,7 +171,7 @@ def _set_lang(lang: str):
     except Exception:
         pass
 
-def show():
+def show(df_raw=None, tables=None):
     # Language switcher
     current = _get_lang()
     st.sidebar.subheader(TEXTS[current]["language"])
@@ -251,10 +251,10 @@ def show():
 - **VA between -2 and 2**: Within expectations (standard)
 - **VA < -2**: Challenges detected (below expectations)
 
-**Dispersion (σ):**
-- **σ < 4**: Low inequality (homogeneous performance)
-- **σ between 4 and 6**: Moderate inequality
-- **σ > 6**: High inequality (strong territorial disparities)
+**Dispersion (sigma):**
+- **sigma < 4**: Low inequality (homogeneous performance)
+- **sigma between 4 and 6**: Moderate inequality
+- **sigma > 6**: High inequality (strong territorial disparities)
 """)
         else:
             st.markdown("""
@@ -263,10 +263,10 @@ def show():
 - **VA entre -2 et 2** : Conforme aux attentes (standard)
 - **VA < -2** : Difficultés détectées (en-dessous des attentes)
 
-**Dispersion (σ) :**
-- **σ < 4** : Faible inégalité (performance homogène)
-- **σ entre 4 et 6** : Inégalité modérée
-- **σ > 6** : Forte inégalité (disparités territoriales marquées)
+**Dispersion (sigma) :**
+- **sigma < 4** : Faible inégalité (performance homogène)
+- **sigma entre 4 et 6** : Inégalité modérée
+- **sigma > 6** : Forte inégalité (disparités territoriales marquées)
 """)
     
     if not df_view.empty:
@@ -381,8 +381,8 @@ def show():
                     title=T["map_title"],
                 )
                 st.caption(T["map_caption"])
-    else:
-        st.info(T["no_data"])
+        else:
+            st.info(T["no_data"])
 
     st.divider()
 
@@ -532,7 +532,7 @@ def show():
             va_interp = T["va_above"]
         
         # Best/worst 
-        best_region = worst_region = "—"
+        best_region = worst_region = "-"
         if "region_academique" in df_view.columns:
             reg_mean = df_view.groupby("region_academique")["valeur_ajoutee"].mean().dropna()
             if not reg_mean.empty:
