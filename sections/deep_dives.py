@@ -399,7 +399,7 @@ Ces établissements démontrent des **performances exceptionnelles** au sein de 
         no_data_msg = "No data available for this filter combination." if T is TEXTS["en"] else "Aucune donnée disponible pour cette combinaison de filtres."
         st.info(no_data_msg)
 
-    # 3) Méthode 1 : Analyse par taille d'établissement
+    # Méthode 1 : Analyse par taille d'établissement
     st.markdown("---")
     method1_title = "**Method 1:** Analysis by School Size" if T is TEXTS["en"] else "**Méthode 1 :** Analyse par taille d'établissement"
     st.markdown(f"### {method1_title}")
@@ -533,7 +533,7 @@ Les effets sectoriels interagissent avec la taille. {"L'avantage du privé n'est
         no_data_msg = "Required columns not available." if T is TEXTS["en"] else "Colonnes requises non disponibles."
         st.info(no_data_msg)
     
-    # 3) Méthode 3 : Analyse des outliers
+    # Méthode 3 : Analyse des outliers
     st.markdown("---")
     method3_title = "**Method 3:** Outliers Analysis" if T is TEXTS["en"] else "**Méthode 3 :** Analyse des Outliers"
     st.markdown(f"### {method3_title}")

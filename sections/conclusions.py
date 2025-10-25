@@ -1,4 +1,4 @@
-# sections/conclusions.py - FULL BILINGUAL, DATA-DRIVEN
+# sections/conclusions.py 
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -212,7 +212,7 @@ Considérez ce tableau de bord comme un **point de départ du dialogue**, pas un
     },
 }
 
-# =========================
+# debut
 def _get_lang(default="fr") -> str:
     try:
         lang = st.query_params.get("lang", default)
@@ -243,7 +243,7 @@ def _safe_corr(df, a, b):
         return None
 
 
-# =========================
+
 def show():
     current = _get_lang()
     st.sidebar.subheader(TEXTS[current]["language"])
@@ -264,7 +264,7 @@ def show():
     st.header(T["header"])
     st.info(T["intro"])
 
-    # Load data (robust) 
+    # Load data  
     try:
         df_raw = load_data()
         tables = make_tables(df_raw)
@@ -288,7 +288,7 @@ def show():
     n_schools = int(len(df_latest)) if not df_latest.empty else 0
     pos_va_pct = float((df_latest["valeur_ajoutee"] > 0).mean() * 100) if "valeur_ajoutee" in df_latest.columns and len(df_latest) else None
 
-    # Regions (latest)
+    # Regions 
     top_region = bottom_region = None
     top_va = bottom_va = None
     gap_va = None
@@ -305,7 +305,7 @@ def show():
                 bottom_region, bottom_va = grp.index[-1], float(grp.iloc[-1])
                 gap_va = top_va - bottom_va
 
-    # Sector gap (latest)
+    # Sector gap 
     sector_delta = None
     p_value = None
     if "secteur" in df_latest.columns and "valeur_ajoutee" in df_latest.columns:
@@ -320,16 +320,16 @@ def show():
             except Exception:
                 p_value = None
 
-    # Correlation (latest)
+    # Correlation 
     corr_rate_va = _safe_corr(df_latest, "taux_reussite_g", "valeur_ajoutee")
 
-    # Time trend (national VA)
+    # Time trend 
     delta_va = None
     if isinstance(ts, pd.DataFrame) and not ts.empty and {"valeur_ajoutee", "session"}.issubset(ts.columns):
         ts_sorted = ts.dropna(subset=["session", "valeur_ajoutee"]).sort_values("session")
         if len(ts_sorted) >= 2:
             delta_va = float(ts_sorted["valeur_ajoutee"].iloc[-1] - ts_sorted["valeur_ajoutee"].iloc[0])
-    # =========================
+
     st.markdown(f"## {T['key_findings_title']}")
 
     # Territorial disparities
@@ -433,7 +433,7 @@ def show():
     for emoji, rec in recommendations:
         st.markdown(f"### {emoji}")
         st.markdown(rec)
-        st.markdown("")  # Espacement
+        st.markdown("")  
 
     st.markdown("---")
     st.markdown(f"## {T['limitations_title']}")
@@ -455,7 +455,7 @@ def show():
 
     st.markdown(T["final_message"])
 
-    # Quick stats (optional footer)
+ 
     if not df_latest.empty and "valeur_ajoutee" in df_latest.columns:
         st.markdown("---")
         st.markdown(f"### {T['quick_stats']}")

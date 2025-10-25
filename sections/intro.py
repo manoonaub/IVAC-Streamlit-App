@@ -287,7 +287,7 @@ def show():
     if missing_cols:
         st.warning(f"⚠️ Expected columns missing after cleaning: {', '.join(missing_cols)}")
     
-    # ---- Details on changes
+
     if diff.get("engineered"):
         st.caption(f"{T.get('eng_cols_caption','Engineered columns added:')} {', '.join(diff['engineered'])}")
 
@@ -308,14 +308,14 @@ def show():
     if T.get("applied_steps"):
         st.markdown(T["applied_steps"])
 
-    # ---- Preview
+
     if T.get("preview_title"):
         st.subheader(T["preview_title"])
     st.dataframe(df_clean.head(), use_container_width=True)
     if T.get("std_note"):
         st.caption(T["std_note"])
 
-    # ---- Checklist & narrative
+ 
     if T.get("checklist_title"):
         st.subheader(T["checklist_title"])
     if T.get("checklist_table"):
@@ -326,6 +326,6 @@ def show():
     if T.get("narrative"):
         st.markdown(T["narrative"])
 
-    # ---- Next
+
     if T.get("next"):
         st.info(T["next"])

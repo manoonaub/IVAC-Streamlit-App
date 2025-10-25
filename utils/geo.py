@@ -1,4 +1,4 @@
-# utils/geo.py — Geographic utilities for choropleth maps
+# utils/geo.py 
 import json
 from pathlib import Path
 from typing import Optional
@@ -79,7 +79,7 @@ def map_chart(
         locations=dep_code_col,
         color=value_col,
         featureidkey=featureidkey,
-        color_continuous_scale="RdYlGn",  # Red-Yellow-Green for performance
+        color_continuous_scale="RdYlGn",  
         title=title,
         hover_data={dep_code_col: True, value_col: True},
     )
@@ -97,7 +97,7 @@ def map_chart(
             showarrow=False,
             xref="paper", yref="paper",
             x=0, y=-0.15,
-            font=dict(size=0),  # Invisible but accessible to screen readers
+            font=dict(size=0),  
         )
     
     st.plotly_chart(fig, use_container_width=True)

@@ -57,7 +57,7 @@ def line_chart(df: pd.DataFrame, x: str, y: str, color: str | None = None, title
         st.error(f"Colonnes manquantes: {x} ou {y} non trouvées dans les données.")
         return
     
-    # Check for sufficient data points
+
     if len(df) < 2:
         st.warning("Données insuffisantes pour créer un graphique de tendance (minimum 2 points requis).")
         return
@@ -230,14 +230,13 @@ def scatter(df: pd.DataFrame, x: str, y: str, color: str | None = None, size: st
         st.info("Aucune donnée pour le nuage de points.")
         return
     
-    # Créer le graphique sans tendance par défaut pour éviter les dépendances
+   
     fig = px.scatter(df, x=x, y=y, color=color, size=size, title=title, color_discrete_sequence=VIBRANT_COLORS, opacity=0.7)
     
-    # Ajouter une tendance simple si demandée et si statsmodels est disponible
+    
     if trendline and trendline != "none":
         try:
             import statsmodels.api as sm
-            # Réajouter la tendance si statsmodels est disponible
             fig = px.scatter(df, x=x, y=y, color=color, size=size, trendline=trendline, title=title, color_discrete_sequence=VIBRANT_COLORS, opacity=0.7)
         except ImportError:
             st.info("Tendance désactivée (statsmodels non disponible)")
@@ -273,11 +272,10 @@ def correlation_heatmap(df: pd.DataFrame, cols: list[str], title: str | None = N
             st.download_button("Télécharger PNG", data=png_bytes, file_name=download_name, mime="image/png")
         except Exception:
             st.caption("Astuce: installe kaleido pour activer l'export PNG.")
-# Palette de couleurs qualitative étendue 
+
 def make_color_map(categories):
     """Retourne un dict {categorie: couleur} avec une grande palette qualitative."""
     import plotly.express as px
-    # On concatène plusieurs palettes pour avoir > 30 couleurs distinctes
     banks = [
         px.colors.qualitative.Set3,
         px.colors.qualitative.D3,
@@ -287,6 +285,4 @@ def make_color_map(categories):
     ]
     flat = [c for bank in banks for c in bank]
     return {cat: flat[i % len(flat)] for i, cat in enumerate(categories)}
-
-# Fonction scatter supprimée - doublon avec la fonction ci-dessus
 

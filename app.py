@@ -4,7 +4,7 @@ from urllib.parse import quote, unquote
 # Pages
 from sections import intro, overview, deep_dives, conclusions, profiling
 
-#pag-
+#pag
 st.set_page_config(
     page_title="IVAC – Value Added Indicators (French Middle Schools)",
     page_icon="🎓",
@@ -72,7 +72,7 @@ except Exception:
         import traceback
         st.code("".join(traceback.format_exc()), language="python")
 
-# ---------- Footer ----------
+#footerr
 st.markdown(
     """
     <hr style="margin-top:3rem;margin-bottom:0.5rem;">

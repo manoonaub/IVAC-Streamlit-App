@@ -38,7 +38,7 @@ def _detect_header_index(raw_text: str) -> int:
     (case-insensitive). If none is found, we assume header at 0.
     """
     lines = raw_text.splitlines()
-    for i, line in enumerate(lines[:200]):  # scan the first 200 lines max
+    for i, line in enumerate(lines[:200]):  
         low = line.lower()
         if "num_ligne" in low and "session" in low:
             return i
