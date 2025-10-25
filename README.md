@@ -106,7 +106,7 @@ http://localhost:8501
 - Policy implications highlighted with icons
 - Contextual warnings (correlation ≠ causation)
 
-###⚡ **Optimizations**
+### **Optimizations**
 - Cached data loading with `@st.cache_data`
 - Pre-aggregated tables for speed
 - Lightweight structure for quick deployment
